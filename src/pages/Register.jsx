@@ -1,4 +1,5 @@
-import { Avatar, Box, Container, Grid, Typography } from "@mui/material";
+import { Avatar, Box, Container, Typography } from "@mui/material";
+import Grid from '@mui/material/Grid2';
 import React from "react";
 import LockIcon from "@mui/icons-material/Lock";
 import { Formik } from "formik";
@@ -53,7 +54,7 @@ const Register = () => {
           ></Formik>
         
         <Box sx={{ textAlign: "center", mt: 2, color: "secondary.main" }}>
-          <Link to="/">Already have an account? Sign in</Link>
+          <Link to="/login">Already have an account? Sign in</Link>
         </Box>
         </Grid>
       </Grid>
