@@ -5,6 +5,7 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import { Divider } from '@mui/material';
 
 export default function BlogCard({_id,image,content,title,createdAt,countOfVisitors,likes,isPublish}) {
   return (
@@ -21,6 +22,10 @@ export default function BlogCard({_id,image,content,title,createdAt,countOfVisit
         </Typography>
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
           {content}
+        </Typography> <br />
+        <Divider/>
+        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+          {`Published Date:${createdAt}`}
         </Typography>
       </CardContent>
       <CardActions>
