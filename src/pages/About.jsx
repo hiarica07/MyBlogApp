@@ -15,16 +15,19 @@ import mylogo from "../assets/mylogo.png"
 export default function About() {
   return (
     <Container sx={{display:"flex", justifyContent:"center",alignItems:"center",height:"100vh"}} >
-        <Card sx={{ maxWidth: 345 }}>
+        <Card sx={{ maxWidth: 345, pt:3 , mt:3 }}>
       <CardMedia
         sx={{ p: 1, objectFit: "contain", height: "250px" }}
         component="img"
         image={mylogo}
         title="HIA"
       />
-      <CardContent>
+      <CardContent sx={{display:"flex", flexDirection:"column", alignItems:"center"}} >
         <Typography gutterBottom variant="h5" component="div">
           Halil İbrahim ARICA
+        </Typography>
+        <Typography gutterBottom variant="h5" component="div">
+          FullStack Developer
         </Typography>
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
         I'm a passionate Full Stack Developer with expertise in building robust web applications from end to end. With a strong foundation in both frontend and backend technologies, I specialize in creating dynamic user experiences and efficient server-side solutions. I have a keen interest in modern JavaScript frameworks, responsive design, and cloud integration, ensuring that every project I work on is scalable, secure, and user-friendly. Whether it's developing sleek interfaces or architecting powerful APIs, I strive to deliver high-quality solutions that meet client needs and exceed expectations.
