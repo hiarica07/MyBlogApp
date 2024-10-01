@@ -1,14 +1,16 @@
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { fetchFail, fetchStart } from "../features/authSlice";
-import { axiosPublic } from "./useAxios";
+import useAxios, { axiosPublic } from "./useAxios";
 import axios from "axios"
 import { getBlogsSuccess } from "../features/blogSlice";
+
 
 const useBlogsCall = () => {
 
     const dispatch = useDispatch();
     const navigate = useNavigate()
+    const axiosWithToken = useAxios()
     
   const getBlogsData = async (endpoint) =>{
         dispatch(fetchStart())
@@ -23,9 +25,21 @@ const useBlogsCall = () => {
         dispatch(fetchFail())
     }
   }
+
+  const postLike = async (blogId) => {
+    try {
+        const { data } = await axiosWithToken.post(`/blogs/${blogId}/postLike`);
+        console.log("Response data:", data); // Başarılı yanıtı buraya ekleyin
+    } catch (error) {
+        console.error("Like işlemi sırasında hata oluştu:", error.response ? error.response.data : error.message);
+        return null;
+    }
+};
+
+
   
     return {
-      getBlogsData,
+      getBlogsData,postLike
     };
   };
   

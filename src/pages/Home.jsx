@@ -4,10 +4,12 @@ import useBlogsCall from '../hooks/useBlogCalls'
 import { useEffect } from 'react'
 import { useSelector } from 'react-redux';
 import BlogCard from '../components/blog/BlogCard';
+import { useState } from 'react';
 
 const Home = () => {
 
-    const {getBlogsData} = useBlogsCall()
+    const {getBlogsData,postLike} = useBlogsCall()
+    // const [countOfLike,getCountOfLike] = useState("0")
 
     const {blogs} = useSelector(state=>state.blog)
     
@@ -25,7 +27,7 @@ const Home = () => {
         <Grid container spacing={2} mt={3}>
           {blogs.map((blog) => (
             <Grid key={blog._id} xs={12} md={6} lg={4} xl={3}>
-              <BlogCard {...blog} />
+              <BlogCard {...blog} postLike={postLike} />
             </Grid>
           ))}
         </Grid>
