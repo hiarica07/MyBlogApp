@@ -33,7 +33,7 @@ const blogSlice = createSlice({
         if (blog._id == _id) {
           return {
             ...blog,
-            likes: didUserLike == false ? blog.likes.filter(l => l != currentUserId) : [...blog.likes,currentUserId]
+            likes: didUserLike == false ? blog?.likes?.filter(l => l != currentUserId) : [...blog.likes,currentUserId]
           }
         } else {
           return blog

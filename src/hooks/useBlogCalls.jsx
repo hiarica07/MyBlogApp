@@ -33,7 +33,6 @@ const useBlogsCall = () => {
           _id: blogId,
           countOfLikes: data.countOfLikes,
           didUserLike: data.didUserLike,
-          endpoint: "blogs",
         })
       );
       console.log("Response data:", data); // Başarılı yanıtı buraya ekleyin
