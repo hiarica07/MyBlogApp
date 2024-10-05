@@ -10,6 +10,7 @@ const blogSlice = createSlice({
     error: false,
     blogs:[],
     categories:[],
+    comments:[],
     
   },
   reducers: {
@@ -39,7 +40,12 @@ const blogSlice = createSlice({
           return blog
         }
       })
-    }
+    },
+    getCommentsSuccess: (state, {payload}) => {
+      state.loading = false;
+      state.error = false;
+      state.comments = payload
+    },
 
     },
     
@@ -51,6 +57,7 @@ export const {
   fetchFail,
   getBlogsSuccess,
   postLikeSuccess,
+  getCommentsSuccess
   
 } = blogSlice.actions;
 export default blogSlice.reducer;

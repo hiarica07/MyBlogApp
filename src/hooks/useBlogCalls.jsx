@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { fetchFail, fetchStart } from "../features/authSlice";
 import useAxios, { axiosPublic } from "./useAxios";
 import axios from "axios";
-import { getBlogsSuccess, postLikeSuccess } from "../features/blogSlice";
+import { getBlogsSuccess, getCommentsSuccess, postLikeSuccess } from "../features/blogSlice";
 import { useSelector } from "react-redux";
 
 const useBlogsCall = () => {
@@ -45,9 +45,21 @@ const useBlogsCall = () => {
     }
   };
 
+  const getComments = async () => {
+    dispatch(fetchStart())
+    try {
+      const {data} = await axiosWithToken.get("comments/")
+      dispatch(getCommentsSuccess(data.data))
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+      dispatch(fetchFail())      
+    } 
+  }
   return {
     getBlogsData,
     postLike,
+    getComments
   };
 };
 
