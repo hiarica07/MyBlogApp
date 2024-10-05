@@ -12,11 +12,12 @@ const Home = () => {
     // const [countOfLike,getCountOfLike] = useState("0")
 
     const {blogs} = useSelector(state=>state.blog)
+    const [page,setPage] = useState(2) // dön de bir bak.
     
     useEffect(()=>{
-        getBlogsData("blogs")
-    
-    },[])
+        getBlogsData("blogs",{params:{limit:10,page}})
+
+    },[page])
 
     console.log("blogs:",blogs);
 
@@ -31,6 +32,7 @@ const Home = () => {
             </Grid>
           ))}
         </Grid>
+
       );
       
 }

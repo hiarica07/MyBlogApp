@@ -6,9 +6,9 @@ import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { Box, Divider } from "@mui/material";
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import CommentIcon from '@mui/icons-material/Comment';
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import CommentIcon from "@mui/icons-material/Comment";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useState } from "react";
@@ -27,35 +27,14 @@ const BlogCard = ({
   countOfVisitors,
   isPublish,
   likes,
-  postLike
+  postLike,
 }) => {
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
-  const {currentUser} = useSelector(state => state.auth)
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { currentUser } = useSelector((state) => state.auth);
 
 
-  const getSingeBlog = async (id) => {
-    dispatch(fetchStart())
-    
-    try {
 
-      const {data} = await axiosPublic(`blogs/${id}`)
-      console.log("SingleBlog:",data);
-      
-      
-    } catch (error) {
-      dispatch(fetchFail())
-      console.log("error");
-      
-    }
-  
-  
-  }
-
-  useEffect(()=>{
-    getSingeBlog()
-  },[])
-  
   return (
     <Card sx={{ maxWidth: 345 }}>
       <CardMedia
@@ -87,7 +66,7 @@ const BlogCard = ({
           Published Date: {createdAt}
         </Typography>
       </CardContent>
-      <CardActions 
+      <CardActions
         sx={{
           display: "flex",
           justifyContent: "space-between",
@@ -95,46 +74,41 @@ const BlogCard = ({
       >
         <Box>
           <Button size="small">
-            <FavoriteIcon
-              onClick={() => postLike(_id)}
-            /> 
+            <FavoriteIcon onClick={() => postLike(_id)} />
             <span>{likes?.length}</span>
           </Button>
           <Button size="small">
-            <CommentIcon/> 
+            <CommentIcon />
             <span>{comments.length}</span>
           </Button>
           <Button size="small">
-            <VisibilityIcon/> 
+            <VisibilityIcon />
             <span>{countOfVisitors}</span>
-          </Button> 
-          
+          </Button>
         </Box>
         {currentUser ? (
           <Box>
-          <Button
-            size="small"
-            onClick={() => {
-              navigate("/details")
-            }}
-          >
-            Read More
-          </Button>
-        </Box>
+            <Button
+              size="small"
+              onClick={() => {
+                navigate("/details");
+              }}
+            >
+              Read More
+            </Button>
+          </Box>
         ) : (
           <Box>
-          <Button
-            size="small"
-            onClick={() => {
-              navigate("/login")
-            }}
-          >
-            Read More
-          </Button>
-        </Box>
+            <Button
+              size="small"
+              onClick={() => {
+                navigate("/login");
+              }}
+            >
+              Read More
+            </Button>
+          </Box>
         )}
-        
-        
       </CardActions>
     </Card>
   );
