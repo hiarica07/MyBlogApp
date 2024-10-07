@@ -56,10 +56,20 @@ const useBlogsCall = () => {
       dispatch(fetchFail())      
     } 
   }
+
+  const postComments = async (comments, info) => {
+    dispatch(fetchStart())
+    try {
+      await axiosWithToken.post(`${comments}/`, info)
+    } catch (error) {
+      dispatch(fetchFail())
+    } 
+  }
   return {
     getBlogsData,
     postLike,
-    getComments
+    getComments,
+    postComments
   };
 };
 

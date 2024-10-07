@@ -10,8 +10,7 @@ import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
 
-const CommentCard = ({comments}) => {
-
+const CommentCard = ({ comments }) => {
   // const { comments } = useSelector((state) => state.blog);
 
   // const { getComments } = useBlogCalls();
@@ -23,40 +22,43 @@ const CommentCard = ({comments}) => {
   // console.log("comments:", comments);
 
   return (
-    <List sx={{ width: "100%",  bgcolor: "background.paper" }}>
+    <List sx={{ width: "100%", bgcolor: "background.paper" }}>
       {comments.map((comment) => {
-        const formattedDate = new Date(comment.createdAt).toLocaleDateString("en-GB", {
-          weekday: "short",
-          year: "numeric",
-          month: "short",
-          day: "numeric",
-        });
+        const formattedDate = new Date(comment.createdAt).toLocaleDateString(
+          "en-GB",
+          {
+            weekday: "short",
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+          }
+        );
         return (
-        <ListItem key={comment._id} alignItems="flex-start">
-          <ListItemAvatar>
-            <Avatar
-              alt={comment?.userId?.username}
-              src="/static/images/avatar/1.jpg"
+          <ListItem key={comment._id} alignItems="flex-start">
+            <ListItemAvatar>
+              <Avatar
+                alt={comment?.userId?.username}
+                src="/static/images/avatar/1.jpg"
+              />
+              <Typography>{comment?.userId?.username}</Typography>
+              <Typography>{formattedDate}</Typography>
+            </ListItemAvatar>
+            <ListItemText
+              primary={
+                <Typography
+                  component="span"
+                  variant="body2"
+                  sx={{ color: "text.primary", display: "inline" }}
+                >
+                  {comment?.comment}
+                </Typography>
+              }
             />
-            <Typography>{comment?.userId?.username}</Typography>
-            <Typography>{formattedDate}</Typography>
-          </ListItemAvatar>
-          <ListItemText
-            primary={
-              <Typography
-                component="span"
-                variant="body2"
-                sx={{ color: "text.primary", display: "inline" }}
-              >
-                {comment?.comment}
-              </Typography>
-            }
-          />
-          <br />
-          <Divider />
-        </ListItem>
-      )})}
-      
+            <br />
+            <Divider />
+          </ListItem>
+        );
+      })}
     </List>
   );
 };
