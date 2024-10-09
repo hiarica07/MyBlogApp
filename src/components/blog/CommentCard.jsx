@@ -1,7 +1,7 @@
 import React from "react";
-import { useEffect } from "react";
-import useBlogCalls from "../../hooks/useBlogCalls";
-import { useSelector } from "react-redux";
+// import { useEffect } from "react";
+// import useBlogCalls from "../../hooks/useBlogCalls";
+// import { useSelector } from "react-redux";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import Divider from "@mui/material/Divider";
@@ -9,8 +9,14 @@ import ListItemText from "@mui/material/ListItemText";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
+import { Box, Button } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import useBlogCalls from "../../hooks/useBlogCalls";
+import CommentModal from "../Modals/CommentModal";
+import { useState } from "react";
 
-const CommentCard = ({ comments }) => {
+const CommentCard = ({ comments, initialState, setInitialState }) => {
   // const { comments } = useSelector((state) => state.blog);
 
   // const { getComments } = useBlogCalls();
@@ -19,10 +25,16 @@ const CommentCard = ({ comments }) => {
   //   getComments();
   // }, []);
 
-  // console.log("comments:", comments);
+  console.log("comments:", comments);
+
+  const { deleteComment } = useBlogCalls();
+
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   return (
-    <List sx={{ width: "100%", bgcolor: "background.paper" }}>
+    <List sx={{ width: "100%", bgcolor: "background.paper", mt: 4 }}>
       {comments.map((comment) => {
         const formattedDate = new Date(comment.createdAt).toLocaleDateString(
           "en-GB",
@@ -56,6 +68,34 @@ const CommentCard = ({ comments }) => {
             />
             <br />
             <Divider />
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+              }}
+            >
+              <Button
+                size="small"
+                onClick={() => {
+                  handleOpen();
+                  // setInitialState({ blogId, comment });
+                }}
+              >
+                <EditIcon />
+              </Button>
+              {open && (
+                <CommentModal
+                  open={open}
+                  handleClose={handleClose}
+                  initialState={initialState}
+                  comment={comment}
+                />
+              )}
+              <Button size="small" onClick={() => deleteComment(comment._id)}>
+                <DeleteOutlineIcon />
+              </Button>
+            </Box>
           </ListItem>
         );
       })}
@@ -64,3 +104,4 @@ const CommentCard = ({ comments }) => {
 };
 
 export default CommentCard;
+
