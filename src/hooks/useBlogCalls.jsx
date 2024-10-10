@@ -23,6 +23,17 @@ const useBlogCalls = () => {
     }
   }
 
+  const postBlog = async (blogs,info) => {
+    dispatch(fetchStart())
+    try {
+      await axiosWithToken.post(`${blogs}/`,info)
+    } catch (error) {
+      dispatch(fetchFail())
+    } finally{
+      getBlogsData("blogs", { params: { limit: 10, page } });
+    }
+  }
+
   // const getLike = async () => {
   //   dispatch(fetchStart())
   //   try {
@@ -126,6 +137,18 @@ const useBlogCalls = () => {
       dispatch(fetchFail())
     }
   } 
+
+  const deleteBlog = async (id) =>{
+    dispatch(fetchStart())
+    try {
+       await axiosWithToken.delete(`blogs/${id}`)
+    } catch (error) {
+      dispatch(fetchFail())
+    } finally{
+      getBlogsData("blogs", { params: { limit: 10, page } })
+      
+    }
+  }
   
   
   return {
@@ -136,6 +159,8 @@ const useBlogCalls = () => {
     //  getComments
     getSingleBlog,
     putComment,
+    postBlog,
+    deleteBlog
     }
 }
 

@@ -24,10 +24,12 @@ import CommentForm from "../components/blog/CommentForm";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const Detail = () => {
 
-  const {getSingleBlog} = useBlogCalls()
+  const navigate = useNavigate()
+  const {getSingleBlog,deleteBlog} = useBlogCalls()
 
   const {blog} = useSelector((state) => state.blog)
   console.log(blog);
@@ -158,7 +160,10 @@ const Detail = () => {
           <Button size="small">
             <EditIcon  />
           </Button>
-          <Button size="small">
+          <Button size="small" onClick={() => {
+  deleteBlog(_id);
+  navigate("/");
+}} >
             <DeleteOutlineIcon />
           </Button>
         </Box>

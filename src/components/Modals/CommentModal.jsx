@@ -37,8 +37,8 @@ const CommentModal = ({ comment, open, handleClose, initialState }) => {
 
   const id = comment._id
   console.log(id);
-  
 
+  
   const handleSubmit = (e) => {
     e.preventDefault()
     putComment(id, info)

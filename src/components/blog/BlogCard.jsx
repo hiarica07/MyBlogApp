@@ -80,7 +80,14 @@ const BlogCard = ({
         <br />
         <Divider />
         <Typography variant="body2" sx={{ color: "text.secondary", mt: 1 }}>
-          Published Date: {createdAt}
+          Published Date: {new Date(createdAt).toLocaleDateString(
+          "en-GB",
+          {
+            weekday: "short",
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+          })}
         </Typography>
       </CardContent>
       <CardActions 

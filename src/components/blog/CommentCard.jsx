@@ -1,7 +1,4 @@
-import React from "react";
-// import { useEffect } from "react";
-// import useBlogCalls from "../../hooks/useBlogCalls";
-// import { useSelector } from "react-redux";
+import React, { useState } from "react";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import Divider from "@mui/material/Divider";
@@ -14,24 +11,24 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import useBlogCalls from "../../hooks/useBlogCalls";
 import CommentModal from "../Modals/CommentModal";
-import { useState } from "react";
 
-const CommentCard = ({ comments, initialState, setInitialState }) => {
-  // const { comments } = useSelector((state) => state.blog);
-
-  // const { getComments } = useBlogCalls();
-
-  // useEffect(() => {
-  //   getComments();
-  // }, []);
-
-  console.log("comments:", comments);
-
+const CommentCard = ({ comments }) => {
   const { deleteComment } = useBlogCalls();
 
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const [open, setOpen] = useState(false); // Modal açık mı kontrolü
+  const [selectedComment, setSelectedComment] = useState(null); // Seçilen yorumu tutar
+
+  // Modal'ı açarken tıklanan yorumu seçer ve state'e ekler
+  const handleOpen = (comment) => {
+    setSelectedComment(comment);
+    setOpen(true);
+  };
+
+  // Modal'ı kapatır ve seçilen yorumu sıfırlar
+  const handleClose = () => {
+    setOpen(false);
+    setSelectedComment(null);
+  };
 
   return (
     <List sx={{ width: "100%", bgcolor: "background.paper", mt: 4 }}>
@@ -48,10 +45,7 @@ const CommentCard = ({ comments, initialState, setInitialState }) => {
         return (
           <ListItem key={comment._id} alignItems="flex-start">
             <ListItemAvatar>
-              <Avatar
-                alt={comment?.userId?.username}
-                src="/static/images/avatar/1.jpg"
-              />
+              <Avatar alt={comment?.userId?.username} src="/static/images/avatar/1.jpg" />
               <Typography>{comment?.userId?.username}</Typography>
               <Typography>{formattedDate}</Typography>
             </ListItemAvatar>
@@ -75,23 +69,21 @@ const CommentCard = ({ comments, initialState, setInitialState }) => {
                 justifyContent: "space-between",
               }}
             >
-              <Button
-                size="small"
-                onClick={() => {
-                  handleOpen();
-                  // setInitialState({ blogId, comment });
-                }}
-              >
+              {/* Edit Butonu */}
+              <Button size="small" onClick={() => handleOpen(comment)}>
                 <EditIcon />
               </Button>
-              {open && (
+
+              {/* CommentModal */}
+              {selectedComment && (
                 <CommentModal
                   open={open}
                   handleClose={handleClose}
-                  initialState={initialState}
-                  comment={comment}
+                  comment={selectedComment} // Seçilen yorumu modal'a gönder
                 />
               )}
+
+              {/* Delete Butonu */}
               <Button size="small" onClick={() => deleteComment(comment._id)}>
                 <DeleteOutlineIcon />
               </Button>
@@ -104,4 +96,3 @@ const CommentCard = ({ comments, initialState, setInitialState }) => {
 };
 
 export default CommentCard;
-
