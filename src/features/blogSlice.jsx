@@ -24,7 +24,7 @@ const blogSlice = createSlice({
       state.loading = false;
       state.error = false;
       state[payload.endpoint] = payload.blog
-      // console.log("blogs:", payload)
+      // console.log(`${payload.endpoint}`, payload)
     },    
     getSingleBlogSuccess: (state, {payload}) => {
       state.loading = false;
@@ -35,6 +35,7 @@ const blogSlice = createSlice({
     //   state.loading = false;
     //   state.error = false;
     // },
+    
     // postLikeSuccess: (state, {payload}) => {
     //   state.loading = false;
     //   state.error = false;
@@ -50,6 +51,7 @@ const blogSlice = createSlice({
     //     }
     //   })
     // },
+
     // getCommentsSuccess: (state, {payload}) => {
     //   state.loading = false;
     //   state.error = false;

@@ -5,10 +5,10 @@ import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { Box, Divider } from "@mui/material";
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import CommentIcon from '@mui/icons-material/Comment';
+import { Box, CircularProgress, Divider } from "@mui/material";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import CommentIcon from "@mui/icons-material/Comment";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 // import { useState } from "react";
@@ -27,31 +27,19 @@ const BlogCard = ({
   countOfVisitors,
   isPublish,
   likes,
-  postLike
+  categoryId
 }) => {
-  
-  const navigate = useNavigate()
-  const {currentUser} = useSelector(state => state.auth)
+  const navigate = useNavigate();
+  const { currentUser, loading } = useSelector((state) => state.auth);
 
-  
+  if (loading) {
+    return (
+      <Box display="flex" alignItems="center" justifyContent="center" minHeight="100vh">
+        <CircularProgress color="primary" />
+      </Box>
+    )
+  }
 
-  // const dispatch = useDispatch()
-
-  // const getSingleBlog = async () => {
-  //   dispatch(fetchStart())
-  //   try {
-  //     const {data} = await axiosPublic(`blogs/${_id}`)
-  //     console.log(data);
-      
-  //   } catch (error) {
-  //     dispatch(fetchFail())
-  //   }
-  // }
-
-  // useEffect(()=>{
-  //   getSingleBlog()
-  // },[])
-  
   return (
     <Card sx={{ maxWidth: 345 }}>
       <CardMedia
@@ -80,6 +68,9 @@ const BlogCard = ({
         <br />
         <Divider />
         <Typography variant="body2" sx={{ color: "text.secondary", mt: 1 }}>
+          Category: {categoryId?.name}
+        </Typography>
+        <Typography variant="body2" sx={{ color: "text.secondary", mt: 1 }}>
           Published Date: {new Date(createdAt).toLocaleDateString(
           "en-GB",
           {
@@ -90,55 +81,49 @@ const BlogCard = ({
           })}
         </Typography>
       </CardContent>
-      <CardActions 
+      <CardActions
         sx={{
           display: "flex",
           justifyContent: "space-between",
         }}
       >
         <Box>
-          <Button size="small">
-            <FavoriteIcon
-              onClick={() => postLike(_id)}
-            /> 
-            <span>{likes?.length}</span>
+          <Button size="small" disabled>
+            <FavoriteIcon sx={{color: "red"}}/>
+            <span><strong>{likes?.length}</strong></span>
           </Button>
-          <Button size="small">
-            <CommentIcon/> 
-            <span>{comments.length}</span>
+          <Button size="small" disabled>
+            <CommentIcon sx={{color: "navy"}}/>
+            <span><strong>{comments.length}</strong></span>
           </Button>
-          <Button size="small">
-            <VisibilityIcon/> 
-            <span>{countOfVisitors}</span>
-          </Button> 
-          
+          <Button size="small" disabled>
+            <VisibilityIcon sx={{color: "secondary.second"}}/>
+            <span><strong>{countOfVisitors}</strong></span>
+          </Button>
         </Box>
         {currentUser ? (
           <Box>
-          <Button
-            size="small"
-            onClick={() => {
-              // getSingleBlog(_id)
-              navigate("/details/"+_id)
-            }}
-          >
-            Read More
-          </Button>
-        </Box>
+            <Button
+              size="small"
+              onClick={() => {                
+                navigate("/details/" + _id);
+              }}
+            >
+              Read More
+            </Button>
+          </Box>
         ) : (
           <Box>
-          <Button
-            size="small"
-            onClick={() => {
-              navigate("/login")
-            }}
-          >
-            Read More
-          </Button>
-        </Box>
+            <Button
+              size="small"
+              onClick={() => {
+                navigate("/login");
+              }}
+            >
+              Read More
+            </Button>
+          </Box>
         )}
-        
-        
       </CardActions>
     </Card>
   );

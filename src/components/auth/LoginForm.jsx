@@ -1,6 +1,9 @@
-import { Box, Button, CircularProgress, TextField } from '@mui/material';
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import { Box, Button, CircularProgress, IconButton, InputAdornment, TextField } from '@mui/material';
 import { Form } from 'formik';
 import React from 'react'
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import * as Yup from "yup"
 
@@ -29,6 +32,9 @@ const LoginForm = ({
   /* and other goodies */
 }) => {
   const {loading} = useSelector(state=>state.auth)
+  const [showPassword, setShowPassword] = useState(false);
+  
+  const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
   return (
     <div>
@@ -48,15 +54,32 @@ const LoginForm = ({
           />
           
           <TextField
+            fullWidth
             id="password"
             name="password"
             label="password"
-            type="password"
+            type={showPassword ? "text" : "password"}
             value={values.password}
+            placeholder="Enter your password"
             onChange={handleChange}
             onBlur={handleBlur}
             error={touched.password && Boolean(errors.password)}
             helperText={touched.password && errors.password}
+            slotProps={{
+              input: {
+                endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={togglePasswordVisibility}
+                        edge="end"
+                        aria-label="toggle password visibility"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  )
+              },
+            }}
             required
           />
           {!loading ? (

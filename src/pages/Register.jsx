@@ -1,6 +1,6 @@
 import { Avatar, Box, Container, Typography } from "@mui/material";
-import Grid from '@mui/material/Grid2';
 import React from "react";
+import Grid from '@mui/material/Grid2';
 import LockIcon from "@mui/icons-material/Lock";
 import { Formik } from "formik";
 import RegisterForm, { SignupSchema } from "../components/auth/RegisterForm";
@@ -9,19 +9,20 @@ import useAuthCall from "../hooks/useAuthCall";
 
 const Register = () => {
 
-  const  {register} = useAuthCall()
+  const {register} = useAuthCall()
 
   return (
-    <Container maxWidth="lg" >
-      <Grid container
+    <Container>
+      <Grid 
+        container
         justifyContent="center"
         direction="row-reverse"
         rowSpacing={{ sm: 3 }}
         sx={{
           height: "100vh",
           p: 2,
-        }}>
-
+        }}
+      >
         <Grid item xs={12} sm={10} md={6}>
           <Avatar
             sx={{
@@ -36,26 +37,25 @@ const Register = () => {
           <Typography textAlign="center">Register</Typography>
           <Formik
             initialValues={{
-              username:"",
+              username: "",
               firstName: "",
               lastName: "",
               email: "",
-              password:"",
               image:"",
-              bio:"",
+              bio: "",
+              password: "",
             }}
             validationSchema={SignupSchema}
-            onSubmit={(values) => {
+            onSubmit={(values, actions) => {
+              // console.log(values)
               register(values)
-              console.log(values)
-              console.log(values);
+              // console.log(actions);
             }}
             component={(props) => <RegisterForm {...props} />}
           ></Formik>
-        
-        <Box sx={{ textAlign: "center", mt: 2, color: "secondary.main" }}>
-          <Link to="/login">Already have an account? Sign in</Link>
-        </Box>
+          <Box sx={{ textAlign: "center", mt: 2 }}>
+            <Link to="/login">Already have an account? Sign in</Link>
+          </Box>
         </Grid>
       </Grid>
     </Container>

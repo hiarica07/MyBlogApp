@@ -23,7 +23,9 @@ const Login = () => {
           p: 2,
         }}
       >
-        <Grid item xs={12} sm={10} md={6}>
+        <Grid size={{ xs: 12, sm: 10, md: 6 }}
+        //  xs={12} sm={10} md={6}
+         >
           <Avatar
             sx={{
               backgroundColor: "secondary.light",
@@ -43,9 +45,9 @@ const Login = () => {
             }}
             validationSchema={SignInSchema}
             onSubmit={(values, actions) => {
-              console.log(values)
+              // console.log(values)
               login(values)
-              console.log(actions);
+              // console.log(actions);
               actions.resetForm();//* 
               actions.setSubmitting(false);
             }}

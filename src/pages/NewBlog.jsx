@@ -14,17 +14,20 @@ import useBlogCalls from "../hooks/useBlogCalls";
 import { useSelector } from "react-redux";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import useCategoryCall from "../hooks/useCategoryCall";
 
 const NewBlog = () => {
+
   const navigate = useNavigate()
-  const { getBlogsData,postBlog } = useBlogCalls();
+  const { postBlog } = useBlogCalls();
+  const { getAllCategories } = useCategoryCall();
 
   useEffect(() => {
-    getBlogsData("categories");
+    getAllCategories();
   }, []);
 
-  const { categories } = useSelector((state) => state.blog);
-  console.log("categories", categories);
+  const { categories } = useSelector((state) => state.category);
+  // console.log("categories", categories);
 
   const [initialState, setInitialState] = useState({
     categoryId: "",
@@ -42,13 +45,12 @@ const NewBlog = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    console.log("newBlog", newBlog)
-    postBlog("blogs/", newBlog)
+    // console.log("newBlog", newBlog)
+    postBlog("blogs", newBlog)
     navigate("/")
-
   }
 
-  console.log(newBlog);  
+  // console.log(newBlog);  
 
   return (
     <Box
@@ -79,7 +81,7 @@ const NewBlog = () => {
           id="title"
           type="text"
           value={newBlog.title}
-          onChange={handleChange} // Değişiklikler burada işlenecek
+          onChange={handleChange}
           required
         />
         <TextField
@@ -89,7 +91,7 @@ const NewBlog = () => {
           id="image"
           type="img"
           value={newBlog.image}
-          onChange={handleChange} // Değişiklikler burada işlenecek
+          onChange={handleChange}
           required
         />
         <FormControl fullWidth>
@@ -106,7 +108,7 @@ const NewBlog = () => {
             required
           >
             <MenuItem value="" disabled>Please choose...</MenuItem>
-            {categories.map((category) => (
+            {categories?.map((category) => (
               <MenuItem key={category._id} value={category._id}>
                 {category.name}
               </MenuItem>
@@ -139,7 +141,7 @@ const NewBlog = () => {
           id="content"
           type="text"
           value={newBlog.content}
-          onChange={handleChange} // Değişiklikler burada işlenecek
+          onChange={handleChange}
           required
         />
         <Button type="submit" variant="contained">

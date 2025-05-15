@@ -10,7 +10,6 @@ const Dashboard = () => {
       <Box>
         <NavBar />
         {/* Drawer */}
-      
       </Box>
       <Outlet />
     </Box>

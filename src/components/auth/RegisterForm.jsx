@@ -19,118 +19,111 @@ export const SignupSchema = Yup.object().shape({
   password: Yup.string()
     .required()
     .min(8)
-    .matches(/\d+/, "Digit karakter içermelidir!")
-    .matches(/[a-z]/, "Küçük harf içermelidir!")
-    .matches(/[A-Z]/, "Büyük harf içermelidir!")
-    .matches(/[@$?!%&*]+/, "Özel karakter içermelidir(@$?!%&*)")
+    .matches(/\d+/, "En az bir rakam içermelidir!")
+    .matches(/[a-z]/, "En az bir küçük harf içermelidir!")
+    .matches(/[A-Z]/, "En az bir büyük harf içermelidir!")
+    .matches(
+      /[@$%&?!*]+/,
+      "(@$%&?!*) özel karakterlerinden en az bir tanesini içermelidir!"
+    ),
 });
 
 const RegisterForm = ({
   values,
-  handleChange,
   errors,
   touched,
+  handleChange,
   handleBlur,
+  // handleSubmit,
   isSubmitting,
+  /* and other goodies */
 }) => {
-
-
-
-
   return (
     <div>
       <Form>
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-          <TextField
-            name="username" //formik name attributedından eşleştirme yapıyor.
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+        <TextField
+            name="username"
             label="Username"
+            type="text"
             value={values.username}
             onChange={handleChange}
-            onBlur={handleBlur} // kullanıcının input alanından ayrıldığını yaklayan event
-            helperText={touched.username && errors.username} //validationda verdiğimiz kalıba uymazsa ilgili mesajları göstermesi için errors dan gelen mesajı yakalıyoruz.
-            error={touched.username && Boolean(errors.username)} //validationda verdiğimiz kalıba uymazsa rengi errora çevirmesi için error attribute ı benden false/true degeri bekliyor ondan dolayı daha sağlıklı olması için boolean deger döndürüyoruz.
-            // touched da kullanıcının inputa tıklayıp tıklamadığını yakalıyor
+            onBlur={handleBlur}
+            error={touched.username && Boolean(errors.username)}
+            helperText={touched.username && errors.username}
             required
           />
           <TextField
-            label="First Name"
+            id="firstName"
             name="firstName"
+            label="FirstName"
             type="text"
-            variant="outlined"
             value={values.firstName}
             onChange={handleChange}
             onBlur={handleBlur}
-            helperText={touched.firstName && errors.firstName}
             error={touched.firstName && Boolean(errors.firstName)}
+            helperText={touched.firstName && errors.firstName}
             required
           />
           <TextField
-            label="Last Name"
+            id="lastName"
             name="lastName"
+            label="LastName"
             type="text"
-            variant="outlined"
             value={values.lastName}
             onChange={handleChange}
             onBlur={handleBlur}
-            helperText={touched.lastName && errors.lastName}
             error={touched.lastName && Boolean(errors.lastName)}
+            helperText={touched.lastName && errors.lastName}
             required
           />
           <TextField
-            label="Email"
+            id="email"
             name="email"
+            label="Email"
             type="email"
-            variant="outlined"
             value={values.email}
             onChange={handleChange}
             onBlur={handleBlur}
-            helperText={touched.email && errors.email}
             error={touched.email && Boolean(errors.email)}
+            helperText={touched.email && errors.email}
             required
           />
           <TextField
-            label="Image"
-            name="image"
             id="image"
+            name="image"
+            label="Image"
             type="url"
-            variant="outlined"
             value={values.image}
             onChange={handleChange}
             onBlur={handleBlur}
-            helperText={touched.image && errors.image}
             error={touched.image && Boolean(errors.image)}
+            helperText={touched.image && errors.image}
           />
-           <TextField
-            label="Bio"
-            name="bio"
+          <TextField
             id="bio"
-            type="img"
-            variant="outlined"
+            name="bio"
+            label="Bio"
+            type="text"
             value={values.bio}
             onChange={handleChange}
             onBlur={handleBlur}
-            helperText={touched.bio && errors.bio}
             error={touched.bio && Boolean(errors.bio)}
+            helperText={touched.bio && errors.bio}
           />
           <TextField
-            label="Password"
-            name="password"
             id="password"
+            name="password"
+            label="password"
             type="password"
-            variant="outlined"
             value={values.password}
             onChange={handleChange}
             onBlur={handleBlur}
-            helperText={touched.password && errors.password}
             error={touched.password && Boolean(errors.password)}
+            helperText={touched.password && errors.password}
             required
           />
-
-          <Button
-            type="submit"
-            variant="contained"
-            disabled={isSubmitting}
-          >
+          <Button type="submit" variant="contained" disabled={isSubmitting}>
             {isSubmitting ? "Loading..." : "Sign Up"}
           </Button>
         </Box>
@@ -138,6 +131,5 @@ const RegisterForm = ({
     </div>
   )
 }
-
 
 export default RegisterForm

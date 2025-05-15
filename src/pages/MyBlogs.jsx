@@ -6,8 +6,10 @@ import Grid from "@mui/material/Grid2";
 import useBlogCalls from "../hooks/useBlogCalls";
 import BlogCard from "../components/blog/BlogCard";
 
-const Home = () => {
+const MyBlogs = () => {
   const { getBlogsData } = useBlogCalls();
+  const { currentUserId } = useSelector((state) => state.auth);
+  console.log(currentUserId);
 
   // const [initialState, setInitialState] = useState({
   //   error: false,
@@ -26,7 +28,10 @@ const Home = () => {
   }, [page]);
 
   const { blogs } = useSelector((state) => state.blog);
-  // console.log("blog:", blogs);
+  console.log("blog:", blogs);
+
+  const myBlogs = blogs?.filter((blog) => blog?.userId?._id === currentUserId);
+  console.log(myBlogs);
 
   return (
     <Grid
@@ -35,9 +40,25 @@ const Home = () => {
       justifyContent="space-between"
       sx={{ minHeight: "100vh", py: 5, m: 2, bgcolor: "secondary.main" }}
     >
-      <Grid container spacing={2} mt={6} sx={{ flex: "1 0 auto", justifyContent:"center", alignItems: "center" }}>
-        {blogs?.map((blog) => ( 
-          <Grid key={blog._id} xs={12} md={6} lg={4} xl={3} sx={{boxShadow: "0 0 10px gray", borderRadius: "20px"}}>
+      <Grid
+        container
+        spacing={2}
+        mt={6}
+        sx={{
+          flex: "1 0 auto",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        {myBlogs?.map((blog) => (
+          <Grid
+            key={blog._id}
+            xs={12}
+            md={6}
+            lg={4}
+            xl={3}
+            sx={{ boxShadow: "0 0 10px gray", borderRadius: "20px" }}
+          >
             <BlogCard
               {...blog}
               // initialState={initialState}
@@ -67,4 +88,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default MyBlogs;

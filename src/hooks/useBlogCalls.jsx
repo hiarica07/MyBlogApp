@@ -1,16 +1,18 @@
-import React from 'react'
 import { useDispatch } from 'react-redux'
 import { fetchFail, fetchStart, getBlogsDataSuccess, getSingleBlogSuccess, postLikeSuccess } from '../features/blogSlice'
 import useAxios, { axiosPublic } from './useAxios'
-import { useSelector } from 'react-redux'
+import { toastErrorNotify, toastSuccessNotify } from '../helper/ToastNotify'
+// import { useSelector } from 'react-redux'
+// import axios from 'axios'
 
 const useBlogCalls = () => {
 
-  const {currentUserId} = useSelector(state=>state.auth)
+  // const {currentUserId} = useSelector(state=>state.auth)
 
   const dispatch = useDispatch()
   const axiosWithToken = useAxios()
 
+  //Dynamic get data function
   const getBlogsData = async (endpoint, options) => {
     dispatch(fetchStart())
     try {
@@ -23,145 +25,85 @@ const useBlogCalls = () => {
     }
   }
 
-  const postBlog = async (blogs,info) => {
-    dispatch(fetchStart())
-    try {
-      await axiosWithToken.post(`${blogs}/`,info)
-    } catch (error) {
-      dispatch(fetchFail())
-    } finally{
-      getBlogsData("blogs", { params: { limit: 10, page } });
-    }
-  }
-
-  // const getLike = async () => {
-  //   dispatch(fetchStart())
-  //   try {
-  //     const {data} = await axiosWithToken(`blogs/${}/getLike`)
-  //   } catch (error) {
-  //     console.log(error);
-  //     dispatch(fetchFail())
-      
-  //   }
-  // }
-
-  const postLike = async (blogId, blogInfo) => {
-    dispatch(fetchStart())
-    try {
-      const {data} = await axiosWithToken.post(`blogs/${blogId}/postLike`,blogInfo)
-      console.log(data);
-    } catch (error) {
-      console.log(error);
-      dispatch(fetchFail())      
-    } finally {
-      getBlogsData("blogs")
-    }
-  }
-
-  //? veri backend'den geldiği için bu fonksiyonu yoruma alıyoruz.
-  // const postLike = async (blogId) => {
-  //   try {
-  //     const { data } = await axiosWithToken.post(`/blogs/${blogId}/postLike`);
-  //     console.log(data, "countOfLikes");
-  //     dispatch(
-  //       postLikeSuccess({
-  //         currentUserId,
-  //         _id: blogId,
-  //         countOfLikes: data.countOfLikes,
-  //         didUserLike: data.didUserLike,
-  //         endpoint: "blogs",
-  //       })
-  //     );
-  //     console.log("Response data:", data); // Başarılı yanıtı buraya ekleyin
-  //   } catch (error) {
-  //     console.error(
-  //       "Like işlemi sırasında hata oluştu:",
-  //       error.response ? error.response.data : error.message
-  //     );
-  //     return null;
-  //   }
-  // };  
-
-  // const getComments = async () => {
-  //   dispatch(fetchStart())
-  //   try {
-  //     const {data} = await axiosWithToken.get("comments/")
-  //     dispatch(getCommentsSuccess(data.data))
-  //     console.log(data);
-  //   } catch (error) {
-  //     console.log(error);
-  //     dispatch(fetchFail())      
-  //   } 
-  // }
-
   const getSingleBlog = async (id) => {
     dispatch(fetchStart());
     try {
       const { data } = await axiosPublic(`blogs/${id}`);
       dispatch(getSingleBlogSuccess(data.data))
-      
-
-      console.log(data.data);
+      // console.log(data.data);
     } catch (error) {
       dispatch(fetchFail());
     }
   };
 
-  const postComment = async (comments, info) => {
+  const postBlog = async (blogs, info) => {
     dispatch(fetchStart())
     try {
-      await axiosWithToken.post(`${comments}/`, info)
+      await axiosWithToken.post(`${blogs}/`, info)
     } catch (error) {
       dispatch(fetchFail())
     } finally {
-      getSingleBlog(info.blogId)
+      getBlogsData("blogs", { params: { limit: 10, page: 1 } })
     }
   }
 
-  const putComment = async (id, info) => {
-    dispatch(fetchStart())
+  const putBlog = async (id, info) => {
+    dispatch(fetchStart());
     try {
-      await axiosWithToken.put(`comments/${id}`, info)
+      await axiosWithToken.put(`blogs/${id}`, info);
+      toastSuccessNotify("Successfully updated your blog!");
     } catch (error) {
-      dispatch(fetchFail())
+      dispatch(fetchFail());
+      toastErrorNotify(
+        error.response.data.message ||
+          "Something went wrong while updating the blog!"
+      );
     } finally {
-      getSingleBlog(info.blogId)
+      getSingleBlog(id);
     }
-  }
+  };
 
-  const deleteComment = async (_id) => {
-    dispatch(fetchStart())    
-      try {        
-        await axiosWithToken.delete(`comments/${_id}`)
-    } catch (error) {
-      dispatch(fetchFail())
-    }
-  } 
-
-  const deleteBlog = async (id) =>{
+  const deleteBlog = async (id) => {
     dispatch(fetchStart())
     try {
-       await axiosWithToken.delete(`blogs/${id}`)
+      await axiosWithToken.delete(`blogs/${id}`)
+      toastSuccessNotify("Successfully deleted your blog!");
     } catch (error) {
       dispatch(fetchFail())
-    } finally{
+      toastErrorNotify(
+        error.response.data.message ||
+          "Something went wrong while deleting the blog!"
+      );
+    } finally {
       getBlogsData("blogs", { params: { limit: 10, page } })
-      
+    }
+  }
+
+  
+  const postLikeBlog = async (blogId, blogInfo) => {
+    dispatch(fetchStart())
+    try {
+      await axiosWithToken.post(`blogs/${blogId}/postLike`,blogInfo)
+    } catch (error) {
+      console.log(error);
+      dispatch(fetchFail())
+      toastErrorNotify(
+        error.response.data.message || "Something went wrong while liking the blog"
+      );
+    } finally {
+      getSingleBlog(blogId)
     }
   }
   
   
   return {
     getBlogsData, 
-    postLike, 
-    postComment,
-    deleteComment,
-    //  getComments
+    postLikeBlog, 
     getSingleBlog,
-    putComment,
     postBlog,
-    deleteBlog
-    }
+    deleteBlog,
+    putBlog
+  }
 }
 
 export default useBlogCalls

@@ -1,31 +1,41 @@
-import React from "react";
 import { Box, Button, Container, FormControl, TextField } from "@mui/material";
 import CommentCard from "./CommentCard";
 import { useState } from "react";
-import useBlogCalls from "../../hooks/useBlogCalls";
+import useCommentCall from "../../hooks/useCommentCall"
 
 const CommentForm = ({
-  open,
-  comments,
-  setOpen,
-  initialState,
-  setInitialState,
   _id,
-  getSingleBlog,
+  open,
+<<<<<<< HEAD
+  // setOpen,
+=======
+  setOpen,
+>>>>>>> d0e0f7d5a6b5e9cdd8d17252304928b700478b77
+  // initialState,
+  // setInitialState,
 }) => {
-  const [info, setInfo] = useState(initialState);
+  const { postComment } = useCommentCall();
+  // const [info, setInfo] = useState(initialState);
+<<<<<<< HEAD
+   const [info, setInfo] = useState({
+    blogId: "",
+    comment: "",
+  });
   // const [lastComments,setLastComments] = useState([])
-
+=======
+  const [info, setInfo] = useState({
+    blogId: "",
+    comment: "",
+  });
+>>>>>>> d0e0f7d5a6b5e9cdd8d17252304928b700478b77
+  
   // console.log(info);
-  console.log(comments);
-
-  const { postComment } = useBlogCalls();
+  // console.log(comments);  
   // console.log(open);
 
   const handleChange = (e) => {
     // console.log(e.target);
-    console.log(e.target.value);
-
+    // console.log(e.target.value);
     setInfo({ ...info, blogId: _id, [e.target.name]: e.target.value });
     // console.log(info);
   };
@@ -63,11 +73,16 @@ const CommentForm = ({
       <Box>
         {open && (
           <CommentCard
-            comments={comments}
+            blogId={_id}
+<<<<<<< HEAD
+            // open={open}
+            // setOpen={setOpen}
+=======
             open={open}
             setOpen={setOpen}
-            initialState={initialState}
-            setInitialState={setInitialState}
+>>>>>>> d0e0f7d5a6b5e9cdd8d17252304928b700478b77
+            // initialState={initialState}
+            // setInitialState={setInitialState}
           />
         )}
       </Box>

@@ -3,52 +3,54 @@ import {
   Button,
   CardContent,
   CardMedia,
+  CircularProgress,
   Container,
   Divider,
   Typography,
 } from "@mui/material";
 import React from "react";
-import { useDispatch } from "react-redux";
-import { fetchFail, fetchStart } from "../features/blogSlice";
 import { axiosPublic } from "../hooks/useAxios";
 import { useEffect } from "react";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import CommentIcon from "@mui/icons-material/Comment";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import useBlogCalls from "../hooks/useBlogCalls";
 // import CommentCard from "../components/blog/CommentCard";
-import CommentForm from "../components/blog/CommentForm";
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import CommentForm from "../components/blog/CommentForm";
+import UpdateMyBlogModal from "../components/Modals/UpdateMyBlogModal";
 
 const Detail = () => {
+  const navigate = useNavigate();
 
-  const navigate = useNavigate()
-  const {getSingleBlog,deleteBlog} = useBlogCalls()
+  const { getSingleBlog, deleteBlog, postLikeBlog, getBlogsData } = useBlogCalls();
 
-  const {blog} = useSelector((state) => state.blog)
-  console.log(blog);
-  
+  const { blog, loading, categories } = useSelector((state) => state.blog);
+  const { currentUserId } = useSelector((state) => state.auth);
 
-  // const [blogDetail, setBlogDetail] = useState("");
+  console.log("categories", categories);
+
+
   const [open, setOpen] = useState(false);
   const toggleComments = () => setOpen(!open);
 
-  // console.log(open);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const handleEditModalOpen = () => setEditModalOpen(true);
+  const handleEditModalClose = () => setEditModalOpen(false);
 
   const { _id } = useParams();
-  // console.log(_id);
-  
 
-  const [initialState, setInitialState] = useState({
-    blogId: "",
-    comment: ""
-  });
+  // const [initialState, setInitialState] = useState({
+  //   blogId: "",
+  //   comment: "",
+  // });
 
   const {
     comments,
@@ -60,35 +62,40 @@ const Detail = () => {
     likes,
     title,
     userId,
+    categoryId
   } = blog;
 
-  // const dispatch = useDispatch();
-
-  // const getSingleBlog = async () => {
-  //   dispatch(fetchStart());
-  //   try {
-  //     const { data } = await axiosPublic(`blogs/${_id}`);
-  //     setBlogDetail(data.data);
-
-  //     // console.log(data.data);
-  //   } catch (error) {
-  //     dispatch(fetchFail());
-  //   }
-  // };
+  console.log(blog);
 
   useEffect(() => {
     getSingleBlog(_id);
+    getBlogsData("categories");
   }, []);
 
-  const { postLike } = useBlogCalls();
+  const likedBlog = () => {
+    if (!likes || !currentUserId) return false;
+    return likes.some((like) => like === currentUserId);
+  };
 
-  // console.log("comments", comments);
+  if (loading) {
+    return (
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        minHeight="100vh"
+      >
+        <CircularProgress color="primary" />
+      </Box>
+    );
+  }
 
   return (
     <Container
       maxWidth={"lg"}
       sx={{ display: "flex", flexDirection: "column", m: 4 }}
     >
+      {/* Blog Image */}
       <CardMedia
         sx={{ height: 140, width: 140 }}
         image={image}
@@ -126,6 +133,7 @@ const Detail = () => {
         <br />
         <Divider />
       </CardContent>
+      {/* Blog Info */}
       <CardContent>
         <Typography gutterBottom variant="h5" component="div">
           {title}
@@ -138,40 +146,95 @@ const Detail = () => {
         >
           {content}
         </Typography>
+        <Typography
+          variant="body2"
+          sx={{
+            color: "text.secondary",
+          }}
+        >
+          Category: {categoryId?.name}
+        </Typography>
       </CardContent>
-      <Box
-        sx={{display:"flex", justifyContent:"space-around"}}
-      >
+      {/* Blog Icons / Like-Comments-CountofVisitors */}
+      <Box sx={{ display: "flex", justifyContent: "space-around" }}>
         <Box>
-          <Button size="small">
-            <FavoriteIcon onClick={() => postLike(_id)} />
+          <Button size="small" onClick={() => postLikeBlog(_id)}>
+            {likedBlog() ? (
+              <FavoriteIcon sx={{ color: "red" }} />
+            ) : (
+              <FavoriteBorderIcon sx={{ color: "red" }} />
+            )}
+
             <span>{likes?.length}</span>
           </Button>
           <Button size="small" onClick={toggleComments}>
-            <CommentIcon />
+            <CommentIcon sx={{ color: "navy" }} />
             <span>{comments?.length}</span>
           </Button>
           <Button size="small">
-            <VisibilityIcon />
+            <VisibilityIcon sx={{ color: "secondary.second" }} />
             <span>{countOfVisitors}</span>
           </Button>
         </Box>
+        {/* Icons / Edit-Delete */}
         <Box>
-          <Button size="small">
-            <EditIcon  />
+          <Button size="small" onClick={handleEditModalOpen}>
+            <EditIcon sx={{ color: "blue" }} />
           </Button>
-          <Button size="small" onClick={() => {
-  deleteBlog(_id);
-  navigate("/");
-}} >
-            <DeleteOutlineIcon />
+          <Button
+            size="small"
+            onClick={() => {
+              deleteBlog(_id);
+              navigate("/");
+            }}
+          >
+            <DeleteOutlineIcon sx={{ color: "red" }} />
           </Button>
         </Box>
       </Box>
-      <Box>{open && <CommentForm open={open} setOpen={setOpen} comments={comments} initialState={initialState} setInitialState={setInitialState} _id={_id} 
-      // getSingleBlog={getSingleBlog}  
 
-      />}</Box>
+      {/* Edit Blog Modal */}
+      <Box>
+        {editModalOpen && (
+          <UpdateMyBlogModal
+            open={editModalOpen}
+            handleClose={handleEditModalClose}
+            blog={blog}
+            categories={categories}
+          />
+        )}
+      </Box>
+      {/* Comment Form */}
+      <Box>
+        {open && (
+          <CommentForm
+            open={open}
+            setOpen={setOpen}
+<<<<<<< HEAD
+           // initialState={initialState}
+           // setInitialState={setInitialState}
+=======
+            // initialState={initialState}
+            // setInitialState={setInitialState}
+>>>>>>> d0e0f7d5a6b5e9cdd8d17252304928b700478b77
+            _id={_id}
+          />
+        )}
+      </Box>
+      {/* Go Back Button */}
+      <Box
+        sx={{display: "flex", justifyContent: "center", alignItems: "center", my: "5px", mx: "10px"}}
+        onClick={() => {
+          navigate(-1);
+        }}
+      >
+        <Button
+          size="small"
+          sx={{border: "1px solid gray", py: "10px", px: "20px"}}
+        >         
+          Go Back
+        </Button>
+      </Box>
     </Container>
   );
 };
