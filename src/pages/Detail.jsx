@@ -210,13 +210,9 @@ const Detail = () => {
           <CommentForm
             open={open}
             setOpen={setOpen}
-<<<<<<< HEAD
            // initialState={initialState}
            // setInitialState={setInitialState}
-=======
-            // initialState={initialState}
-            // setInitialState={setInitialState}
->>>>>>> d0e0f7d5a6b5e9cdd8d17252304928b700478b77
+
             _id={_id}
           />
         )}
