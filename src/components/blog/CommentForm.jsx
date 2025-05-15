@@ -6,28 +6,19 @@ import useCommentCall from "../../hooks/useCommentCall"
 const CommentForm = ({
   _id,
   open,
-<<<<<<< HEAD
   // setOpen,
-=======
-  setOpen,
->>>>>>> d0e0f7d5a6b5e9cdd8d17252304928b700478b77
   // initialState,
   // setInitialState,
 }) => {
   const { postComment } = useCommentCall();
   // const [info, setInfo] = useState(initialState);
-<<<<<<< HEAD
+
    const [info, setInfo] = useState({
     blogId: "",
     comment: "",
   });
+  
   // const [lastComments,setLastComments] = useState([])
-=======
-  const [info, setInfo] = useState({
-    blogId: "",
-    comment: "",
-  });
->>>>>>> d0e0f7d5a6b5e9cdd8d17252304928b700478b77
   
   // console.log(info);
   // console.log(comments);  
@@ -74,13 +65,9 @@ const CommentForm = ({
         {open && (
           <CommentCard
             blogId={_id}
-<<<<<<< HEAD
             // open={open}
             // setOpen={setOpen}
-=======
-            open={open}
-            setOpen={setOpen}
->>>>>>> d0e0f7d5a6b5e9cdd8d17252304928b700478b77
+
             // initialState={initialState}
             // setInitialState={setInitialState}
           />
