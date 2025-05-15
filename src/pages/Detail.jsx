@@ -26,6 +26,7 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import CommentForm from "../components/blog/CommentForm";
 import UpdateMyBlogModal from "../components/Modals/UpdateMyBlogModal";
+import CommentCard from "../components/blog/CommentCard";
 
 const Detail = () => {
   const navigate = useNavigate();
@@ -209,6 +210,19 @@ const Detail = () => {
            // setInitialState={setInitialState}
 
             _id={_id}
+          />
+        )}
+      </Box>
+      {/* Comment Card  */}
+      <Box>
+        {open && (
+          <CommentCard
+            blogId={_id}
+            // open={open}
+            // setOpen={setOpen}
+
+            // initialState={initialState}
+            // setInitialState={setInitialState}
           />
         )}
       </Box>

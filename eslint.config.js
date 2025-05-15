@@ -29,7 +29,10 @@ export default [
       ...react.configs['jsx-runtime'].rules,
       ...reactHooks.configs.recommended.rules,
       'react/jsx-no-target-blank': 'off',
-      'no-unused-vars': 'off',   // buraya yapıştırdım
+      'no-unused-vars': 'off',   // Kullanılmayan değişkenler için uyarıları kapatır
+      'react/no-unused-prop-types': 'off', // Kullanılmayan propslar için uyarıları kapatır
+      'react-hooks/exhaustive-deps': 'off', // useEffect ve useCallback içindeki bağımlılık dizileri için uyarıları kapatır
+      'react/no-unescaped-entities': 'off', // kesme işareti için
       'react-refresh/only-export-components': [
         'warn',
         { allowConstantExport: true },

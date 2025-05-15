@@ -1,5 +1,4 @@
 import { Avatar, Box, Container, Typography } from "@mui/material";
-import React from "react";
 import Grid from '@mui/material/Grid2';
 import LockIcon from "@mui/icons-material/Lock";
 import { Formik } from "formik";

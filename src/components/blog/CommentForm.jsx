@@ -61,7 +61,7 @@ const CommentForm = ({
           Add Comment
         </Button>
       </FormControl>
-      <Box>
+      {/* <Box>
         {open && (
           <CommentCard
             blogId={_id}
@@ -72,7 +72,7 @@ const CommentForm = ({
             // setInitialState={setInitialState}
           />
         )}
-      </Box>
+      </Box> */}
     </Container>
   );
 };
