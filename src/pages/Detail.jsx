@@ -47,11 +47,6 @@ const Detail = () => {
 
   const { _id } = useParams();
 
-  // const [initialState, setInitialState] = useState({
-  //   blogId: "",
-  //   comment: "",
-  // });
-
   const {
     comments,
     content,
