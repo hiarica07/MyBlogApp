@@ -48,7 +48,7 @@ const FeaturedBlog = ({
     >
       <Grid container>
         {/* Image Section */}
-        <Grid xs={12} md={6}>
+        <Grid size={{xs: 12, md: 6}}>
           <Box
             sx={{
               height: { xs: 240, md: "100%" },
@@ -75,7 +75,7 @@ const FeaturedBlog = ({
         </Grid>
 
         {/* Content Section */}
-        <Grid xs={12} md={6}>
+        <Grid size={{xs: 12, md: 6}}>
           <Box sx={{ p: { xs: 3, md: 4 }, height: "100%", display: "flex", flexDirection: "column" }}>
             <Typography variant="h4" component="h3" gutterBottom sx={{ fontWeight: "bold" }}>
               {title}
