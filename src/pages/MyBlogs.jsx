@@ -7,15 +7,9 @@ import useBlogCalls from "../hooks/useBlogCalls";
 import BlogCard from "../components/blog/BlogCard";
 
 const MyBlogs = () => {
-  const { getBlogsData } = useBlogCalls();
+  const { getSingleUserBlogs } = useBlogCalls();
   const { currentUserId } = useSelector((state) => state.auth);
   console.log(currentUserId);
-
-  // const [initialState, setInitialState] = useState({
-  //   error: false,
-  //   didUserLike: false,
-  //   countOfLikes: 0,
-  // });
 
   const [page, setPage] = useState(1); // İlk sayfa 1 olsun
 
@@ -24,14 +18,14 @@ const MyBlogs = () => {
   };
 
   useEffect(() => {
-    getBlogsData("blogs", { params: { limit: 10, page } });
+    getSingleUserBlogs("userBlogs", { params: { limit: 10, page } });
   }, [page]);
 
-  const { blogs } = useSelector((state) => state.blog);
-  console.log("blog:", blogs);
+  const { blogs , singleUserBlogs } = useSelector((state) => state.blog);
+  console.log("blog:", singleUserBlogs);
 
-  const myBlogs = blogs?.filter((blog) => blog?.userId?._id === currentUserId);
-  console.log(myBlogs);
+  // const myBlogs = blogs?.filter((blog) => blog?.userId?._id === currentUserId);
+  // console.log(myBlogs);
 
   return (
     <Grid
@@ -50,7 +44,7 @@ const MyBlogs = () => {
           alignItems: "center",
         }}
       >
-        {myBlogs?.map((blog) => (
+        {singleUserBlogs?.map((blog) => (
           <Grid
             key={blog._id}
             xs={12}

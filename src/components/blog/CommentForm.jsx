@@ -5,7 +5,7 @@ import useCommentCall from "../../hooks/useCommentCall"
 
 const CommentForm = ({
   _id,
-  open,
+  // open,
   // setOpen,
   // initialState,
   // setInitialState,

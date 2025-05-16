@@ -10,6 +10,7 @@ import Detail from '../pages/Detail'
 import NewBlog from '../pages/NewBlog'
 import MyBlogs from '../pages/MyBlogs'
 import Account from '../pages/Account'
+import MyBlogDetail from '../pages/MyBlogDetail'
 
 const AppRouter = () => {
   return (
@@ -23,6 +24,7 @@ const AppRouter = () => {
           <Route path="about" element={<About />} />
           <Route path="/" element={<PrivateRouter/>}>
             <Route path="details/:_id" element={<Detail/>}/>
+            <Route path="my-blog-details/:_id" element={<MyBlogDetail/>}/>
             <Route path="new-blog" element={<NewBlog/>}/>
             <Route path="myblogs" element={<MyBlogs/>}/>
             <Route path="account" element={<Account/>}/>
