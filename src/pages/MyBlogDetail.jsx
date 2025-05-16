@@ -168,7 +168,7 @@ const MyBlogDetail = () => {
 
           {/* Meta Information */}
           <Grid container spacing={2} sx={{ mb: 3 }}>
-            <Grid item xs={12} sm={6}>
+            <Grid size={{xs: 12, sm: 6}}>
               <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <Avatar sx={{ bgcolor: "primary.main" }}>
                   <PersonIcon />
@@ -180,7 +180,7 @@ const MyBlogDetail = () => {
               </Box>
             </Grid>
 
-            <Grid item xs={12} sm={6}>
+            <Grid size={{xs: 12, sm: 6}}>
               <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <Avatar sx={{ bgcolor: "secondary.main" }}>
                   <CalendarIcon />
@@ -195,7 +195,7 @@ const MyBlogDetail = () => {
             </Grid>
 
             {categoryId?.name && (
-              <Grid item xs={12} sm={6}>
+              <Grid size={{xs: 12, sm: 6}}>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                   <Avatar sx={{ bgcolor: "info.main" }}>
                     <CategoryIcon />
@@ -208,7 +208,7 @@ const MyBlogDetail = () => {
               </Grid>
             )}
 
-            <Grid item xs={12} sm={6}>
+            <Grid size={{xs: 12, sm: 6}}>
               <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <Avatar sx={{ bgcolor: "success.main" }}>
                   <VisibilityIcon />
