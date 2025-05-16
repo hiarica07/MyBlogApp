@@ -1,196 +1,266 @@
+import { useEffect, useState } from "react"
 import {
   Box,
   Button,
-  CardContent,
-  CardMedia,
   CircularProgress,
   Container,
-  Divider,
   Typography,
-} from "@mui/material";
-import React from "react";
-import { axiosPublic } from "../hooks/useAxios";
-import { useEffect } from "react";
-import { useState } from "react";
-import { useParams } from "react-router-dom";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import CommentIcon from "@mui/icons-material/Comment";
-import AccountBoxIcon from "@mui/icons-material/AccountBox";
-import useBlogCalls from "../hooks/useBlogCalls";
-// import CommentCard from "../components/blog/CommentCard";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import CommentForm from "../components/blog/CommentForm";
-import UpdateMyBlogModal from "../components/Modals/UpdateMyBlogModal";
-import CommentCard from "../components/blog/CommentCard";
+  Paper,
+  Divider,
+  Avatar,
+  Chip,
+  IconButton,
+  Tooltip,
+} from "@mui/material"
+import Grid from "@mui/material/Grid2"
+import {
+  Favorite as FavoriteIcon,
+  FavoriteBorder as FavoriteBorderIcon,
+  Visibility as VisibilityIcon,
+  Comment as CommentIcon,
+  ArrowBack as ArrowBackIcon,
+  Share as ShareIcon,
+  BookmarkAdd as BookmarkIcon,
+  Person as PersonIcon,
+  CalendarToday as CalendarIcon,
+  AccessTime as AccessTimeIcon,
+} from "@mui/icons-material"
+import { useParams, useNavigate } from "react-router-dom"
+import { useSelector } from "react-redux"
+import useBlogCalls from "../hooks/useBlogCalls"
+import CommentForm from "../components/blog/CommentForm"
+import CommentCard from "../components/blog/CommentCard"
+import UpdateMyBlogModal from "../components/Modals/UpdateMyBlogModal"
 
 const Detail = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
+  const { _id } = useParams()
 
-  const { getSingleBlog, deleteBlog, postLikeBlog, getBlogsData } = useBlogCalls();
+  const { getSingleBlog, postLikeBlog, getBlogsData } = useBlogCalls()
+  const { blog, loading, categories } = useSelector((state) => state.blog)
+  const { currentUserId } = useSelector((state) => state.auth)
 
-  const { blog, loading, categories } = useSelector((state) => state.blog);
-  const { currentUserId } = useSelector((state) => state.auth);
+  // State for comments section
+  const [open, setOpen] = useState(false)
+  const toggleComments = () => setOpen(!open)
 
-  console.log("categories", categories);
+  // State for edit modal
+  const [editModalOpen, setEditModalOpen] = useState(false)
+  const handleEditModalClose = () => setEditModalOpen(false)
 
+  // Extract blog data
+  const { comments, content, countOfVisitors, createdAt, image, likes, title, userId, categoryId } = blog
 
-  const [open, setOpen] = useState(false);
-  const toggleComments = () => setOpen(!open);
-
-  const [editModalOpen, setEditModalOpen] = useState(false);
-  const handleEditModalOpen = () => setEditModalOpen(true);
-  const handleEditModalClose = () => setEditModalOpen(false);
-
-  const { _id } = useParams();
-
-  const {
-    comments,
-    content,
-    countOfVisitors,
-    createdAt,
-    image,
-    isPublish,
-    likes,
-    title,
-    userId,
-    categoryId
-  } = blog;
-
-  console.log(blog);
-
-  useEffect(() => {
-    getSingleBlog(_id);
-    getBlogsData("categories");
-  }, []);
-
+  // Check if current user has liked the blog
   const likedBlog = () => {
-    if (!likes || !currentUserId) return false;
-    return likes.some((like) => like === currentUserId);
-  };
+    if (!likes || !currentUserId) return false
+    return likes.some((like) => like === currentUserId)
+  }
+
+  // Format date
+  const formattedDate = createdAt
+    ? new Date(createdAt).toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+      })
+    : ""
+
+  // Estimate reading time (roughly 200 words per minute)
+  const wordCount = content?.split(/\s+/).length || 0
+  const readingTime = Math.max(1, Math.ceil(wordCount / 200))
+
+  // Fetch blog data
+  useEffect(() => {
+    getSingleBlog(_id)
+    getBlogsData("categories")
+  }, [_id])
 
   if (loading) {
     return (
-      <Box
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        minHeight="100vh"
-      >
+      <Box display="flex" alignItems="center" justifyContent="center" minHeight="100vh">
         <CircularProgress color="primary" />
       </Box>
-    );
+    )
   }
 
   return (
-    <Container
-      maxWidth={"lg"}
-      sx={{ display: "flex", flexDirection: "column", m: 4 }}
-    >
-      {/* Blog Image */}
-      <CardMedia
-        sx={{ height: 140, width: 140 }}
-        image={image}
-        title={title}
-        component="img"
-      />
-
-      {/* User info */}
-      <CardContent
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "flex-start",
-        }}
-      >
-        <div>
-          <AccountBoxIcon />
-        </div>
-        <div>
-          <Typography gutterBottom variant="body2" component="div">
-            {userId?.username}
-          </Typography>
-          <Typography variant="body2" sx={{ color: "text.secondary", mt: 1 }}>
-            {new Date(createdAt).toLocaleString("tr-TR", {
-              day: "2-digit",
-              month: "2-digit",
-              year: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-              second: "2-digit",
-            })}
-          </Typography>
-        </div>
-
-        <br />
-        <Divider />
-      </CardContent>
-      {/* Blog Info */}
-      <CardContent>
-        <Typography gutterBottom variant="h5" component="div">
-          {title}
-        </Typography>
-        <Typography
-          variant="body2"
-          sx={{
-            color: "text.secondary",
-          }}
+    <Box sx={{ bgcolor: "#f5f5f5", py: 4, minHeight: "100vh" }}>
+      <Container maxWidth="lg">
+        {/* Back Button */}
+        <Button
+          startIcon={<ArrowBackIcon />}
+          onClick={() => navigate(-1)}
+          sx={{ mb: 3 }}
+          variant="text"
+          color="inherit"
         >
-          {content}
-        </Typography>
-        <Typography
-          variant="body2"
-          sx={{
-            color: "text.secondary",
-          }}
-        >
-          Category: {categoryId?.name}
-        </Typography>
-      </CardContent>
-      {/* Blog Icons / Like-Comments-CountofVisitors */}
-      <Box sx={{ display: "flex", justifyContent: "space-around" }}>
-        <Box>
-          <Button size="small" onClick={() => postLikeBlog(_id)}>
-            {likedBlog() ? (
-              <FavoriteIcon sx={{ color: "red" }} />
-            ) : (
-              <FavoriteBorderIcon sx={{ color: "red" }} />
+          Back
+        </Button>
+
+        <Paper elevation={1} sx={{ borderRadius: 2, overflow: "hidden", mb: 4 }}>
+          {/* Blog Header with Image */}
+          <Box sx={{ position: "relative" }}>
+            <Box
+              component="img"
+              src={image || "/placeholder.svg?height=400&width=1200"}
+              alt={title}
+              sx={{
+                width: "100%",
+                height: { xs: 200, sm: 300, md: 400 },
+                objectFit: "cover",
+              }}
+            />
+
+            {categoryId?.name && (
+              <Chip
+                label={categoryId.name}
+                color="primary"
+                size="medium"
+                sx={{
+                  position: "absolute",
+                  top: 16,
+                  left: 16,
+                  fontWeight: "bold",
+                }}
+              />
             )}
+          </Box>
 
-            <span>{likes?.length}</span>
-          </Button>
-          <Button size="small" onClick={toggleComments}>
-            <CommentIcon sx={{ color: "navy" }} />
-            <span>{comments?.length}</span>
-          </Button>
-          <Button size="small">
-            <VisibilityIcon sx={{ color: "secondary.second" }} />
-            <span>{countOfVisitors}</span>
-          </Button>
-        </Box>
-        {/* Icons / Edit-Delete */}
-        <Box>
-          <Button size="small" onClick={handleEditModalOpen}>
-            <EditIcon sx={{ color: "blue" }} />
-          </Button>
-          <Button
-            size="small"
-            onClick={() => {
-              deleteBlog(_id);
-              navigate("/");
-            }}
-          >
-            <DeleteOutlineIcon sx={{ color: "red" }} />
-          </Button>
-        </Box>
-      </Box>
+          {/* Blog Content */}
+          <Box sx={{ p: { xs: 2, sm: 3, md: 4 } }}>
+            {/* Title */}
+            <Typography
+              variant="h3"
+              component="h1"
+              gutterBottom
+              sx={{
+                fontWeight: "bold",
+                mb: 3,
+                fontSize: { xs: "1.75rem", sm: "2.25rem", md: "2.75rem" },
+              }}
+            >
+              {title}
+            </Typography>
 
-      {/* Edit Blog Modal */}
-      <Box>
+            {/* Meta Information */}
+            <Grid container spacing={2} sx={{ mb: 4 }}>
+              <Grid xs={12} sm={6} md={3}>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  <Avatar sx={{ bgcolor: "primary.main" }}>
+                    {userId?.username ? userId.username[0].toUpperCase() : <PersonIcon />}
+                  </Avatar>
+                  <Box>
+                    <Typography variant="subtitle2">Author</Typography>
+                    <Typography variant="body2">{userId?.username || "Anonymous"}</Typography>
+                  </Box>
+                </Box>
+              </Grid>
+
+              <Grid xs={12} sm={6} md={3}>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  <Avatar sx={{ bgcolor: "secondary.main" }}>
+                    <CalendarIcon />
+                  </Avatar>
+                  <Box>
+                    <Typography variant="subtitle2">Published Date</Typography>
+                    <Typography variant="body2">{formattedDate}</Typography>
+                  </Box>
+                </Box>
+              </Grid>
+
+              <Grid xs={12} sm={6} md={3}>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  <Avatar sx={{ bgcolor: "info.main" }}>
+                    <AccessTimeIcon />
+                  </Avatar>
+                  <Box>
+                    <Typography variant="subtitle2">Reading Time</Typography>
+                    <Typography variant="body2">{readingTime} min read</Typography>
+                  </Box>
+                </Box>
+              </Grid>
+
+              <Grid xs={12} sm={6} md={3}>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  <Avatar sx={{ bgcolor: "success.main" }}>
+                    <VisibilityIcon />
+                  </Avatar>
+                  <Box>
+                    <Typography variant="subtitle2">Views</Typography>
+                    <Typography variant="body2">{countOfVisitors}</Typography>
+                  </Box>
+                </Box>
+              </Grid>
+            </Grid>
+
+            <Divider sx={{ my: 3 }} />
+
+            {/* Blog Content */}
+            <Typography
+              variant="body1"
+              sx={{
+                mb: 4,
+                lineHeight: 1.8,
+                fontSize: "1.1rem",
+                color: "text.primary",
+              }}
+            >
+              {content}
+            </Typography>
+
+            <Divider sx={{ my: 3 }} />
+
+            {/* Engagement Stats */}
+            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <Box sx={{ display: "flex", gap: 2 }}>
+                <Button
+                  startIcon={likedBlog() ? <FavoriteIcon color="error" /> : <FavoriteBorderIcon />}
+                  onClick={() => postLikeBlog(_id)}
+                  variant="outlined"
+                  size="medium"
+                >
+                  {likes?.length || 0} Likes
+                </Button>
+
+                <Button startIcon={<CommentIcon />} onClick={toggleComments} variant="outlined" size="medium">
+                  {comments?.length || 0} Comments
+                </Button>
+              </Box>
+
+              <Box>
+                <Tooltip title="Share">
+                  <IconButton color="primary">
+                    <ShareIcon />
+                  </IconButton>
+                </Tooltip>
+
+                <Tooltip title="Bookmark">
+                  <IconButton color="primary">
+                    <BookmarkIcon />
+                  </IconButton>
+                </Tooltip>
+              </Box>
+            </Box>
+          </Box>
+        </Paper>
+
+        {/* Comments Section */}
+        {open && (
+          <Paper elevation={1} sx={{ mt: 3, p: 3, borderRadius: 2 }}>
+            <Typography variant="h5" fontWeight="bold" gutterBottom>
+              Comments
+            </Typography>
+
+            <CommentForm _id={_id} open={open} setOpen={setOpen} />
+
+            <Box sx={{ mt: 3 }}>
+              <CommentCard blogId={_id} />
+            </Box>
+          </Paper>
+        )}
+
+        {/* Edit Blog Modal */}
         {editModalOpen && (
           <UpdateMyBlogModal
             open={editModalOpen}
@@ -199,49 +269,21 @@ const Detail = () => {
             categories={categories}
           />
         )}
-      </Box>
-      {/* Comment Form */}
-      <Box>
-        {open && (
-          <CommentForm
-            open={open}
-            setOpen={setOpen}
-           // initialState={initialState}
-           // setInitialState={setInitialState}
 
-            _id={_id}
-          />
-        )}
-      </Box>
-      {/* Comment Card  */}
-      <Box>
-        {open && (
-          <CommentCard
-            blogId={_id}
-            // open={open}
-            // setOpen={setOpen}
+        {/* Go Back Button */}
+        <Box
+          sx={{ display: "flex", justifyContent: "center", alignItems: "center", my: 3 }}
+          onClick={() => {
+            navigate(-1)
+          }}
+        >
+          <Button size="medium" variant="outlined" startIcon={<ArrowBackIcon />} sx={{ borderRadius: 8, px: 4, py: 1 }}>
+            Go Back
+          </Button>
+        </Box>
+      </Container>
+    </Box>
+  )
+}
 
-            // initialState={initialState}
-            // setInitialState={setInitialState}
-          />
-        )}
-      </Box>
-      {/* Go Back Button */}
-      <Box
-        sx={{display: "flex", justifyContent: "center", alignItems: "center", my: "5px", mx: "10px"}}
-        onClick={() => {
-          navigate(-1);
-        }}
-      >
-        <Button
-          size="small"
-          sx={{border: "1px solid gray", py: "10px", px: "20px"}}
-        >         
-          Go Back
-        </Button>
-      </Box>
-    </Container>
-  );
-};
-
-export default Detail;
+export default Detail

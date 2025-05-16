@@ -5,7 +5,7 @@ import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { Container } from "@mui/material";
-import logoPng from "../assets/GK-logo.png";
+import logoPng from "../assets/Halil-Logo.png";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import InstagramIcon from "@mui/icons-material/Instagram";
@@ -27,7 +27,7 @@ export default function About() {
           sx={{ p: 1, objectFit: "contain", height: "250px" }}
           component="img"
           image={logoPng}
-          title="Gokce Kemaloglu"
+          title="Halil Arica"
         />
         <CardContent
           sx={{
@@ -63,7 +63,7 @@ export default function About() {
           <Button
             component="a"
             size="small"
-            href="https://www.linkedin.com/in/gokcekemaloglu/"
+            href="https://www.linkedin.com/in/halilarica/"
             target="_blank"
             title="LinkedIn"
           >
@@ -72,7 +72,7 @@ export default function About() {
           <Button
             component="a"
             size="small"
-            href="https://github.com/gokcekemaloglu"
+            href="https://www.linkedin.com/in/halilarica/"
             target="_blank"
             title="GitHub"
           >
@@ -81,7 +81,7 @@ export default function About() {
           <Button
             component="a"
             size="small"
-            href="https://www.instagram.com/gokce_kemaloglu/"
+            href="https://www.linkedin.com/in/halilarica/"
             target="_blank"
             title="Instagram"
           >
