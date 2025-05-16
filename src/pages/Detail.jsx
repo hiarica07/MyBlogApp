@@ -145,7 +145,7 @@ const Detail = () => {
 
             {/* Meta Information */}
             <Grid container spacing={2} sx={{ mb: 4 }}>
-              <Grid xs={12} sm={6} md={3}>
+              <Grid size={{xs: 12, md: 3, sm:6}}>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                   <Avatar sx={{ bgcolor: "primary.main" }}>
                     {userId?.username ? userId.username[0].toUpperCase() : <PersonIcon />}
@@ -157,7 +157,7 @@ const Detail = () => {
                 </Box>
               </Grid>
 
-              <Grid xs={12} sm={6} md={3}>
+              <Grid size={{xs: 12, md: 3, sm:6}}>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                   <Avatar sx={{ bgcolor: "secondary.main" }}>
                     <CalendarIcon />
@@ -169,7 +169,7 @@ const Detail = () => {
                 </Box>
               </Grid>
 
-              <Grid xs={12} sm={6} md={3}>
+              <Grid size={{xs: 12, md: 3, sm:6}}>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                   <Avatar sx={{ bgcolor: "info.main" }}>
                     <AccessTimeIcon />
@@ -181,7 +181,7 @@ const Detail = () => {
                 </Box>
               </Grid>
 
-              <Grid xs={12} sm={6} md={3}>
+              <Grid size={{xs: 12, md: 3, sm:6}}>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                   <Avatar sx={{ bgcolor: "success.main" }}>
                     <VisibilityIcon />

@@ -88,7 +88,7 @@ const MyBlogListItem = ({
     >
       <Grid container spacing={2}>
         {/* Image */}
-        <Grid item xs={12} sm={2}>
+        <Grid size={{xs: 12, sm:2}}>
           <Box
             sx={{
               height: 100,
@@ -102,7 +102,7 @@ const MyBlogListItem = ({
         </Grid>
 
         {/* Content */}
-        <Grid item xs={12} sm={8}>
+        <Grid size={{xs: 12, sm:8}}>
           <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
             <Typography variant="h6" component="div" noWrap sx={{ mr: 1 }}>
               {title}
@@ -137,7 +137,7 @@ const MyBlogListItem = ({
         </Grid>
 
         {/* Stats and Actions */}
-        <Grid item xs={12} sm={2}>
+        <Grid size={{xs: 12, sm:2}}>
           <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
             {/* Stats */}
             <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
