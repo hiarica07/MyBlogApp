@@ -37,7 +37,7 @@ export default function About() {
           }}
         >
           <Typography gutterBottom variant="h5" component="div">
-            Gokce Kemaloglu
+            Halil İbrahim Arıca
           </Typography>
           <Typography gutterBottom variant="h5" component="div">
             FullStack Developer

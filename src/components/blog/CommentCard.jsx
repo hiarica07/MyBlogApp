@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from "react"
-import { List, Avatar, Typography, Box, Button, CircularProgress, Paper, IconButton, Tooltip } from "@mui/material"
+import {
+  List,
+  Avatar,
+  Typography,
+  Box,
+  Button,
+  CircularProgress,
+  Paper,
+  IconButton,
+  Tooltip,
+} from "@mui/material"
 import {
   Favorite as FavoriteIcon,
   FavoriteBorder as FavoriteBorderIcon,
@@ -55,7 +65,7 @@ const CommentCard = ({ blogId }) => {
     return (
       <Paper sx={{ p: 3, textAlign: "center", bgcolor: "background.paper" }}>
         <Typography variant="body1" color="text.secondary">
-          Henüz yorum yapılmamış. İlk yorumu siz yapın!
+          No comments yet. Be the first to comment!
         </Typography>
       </Paper>
     )
@@ -91,7 +101,9 @@ const CommentCard = ({ blogId }) => {
                   </Avatar>
 
                   <Box>
-                    <Typography variant="subtitle2">{comment?.userId?.username || "Anonim"}</Typography>
+                    <Typography variant="subtitle2">
+                      {comment?.userId?.username || "Anonymous"}
+                    </Typography>
                     <Typography variant="caption" color="text.secondary">
                       {formattedDate}
                     </Typography>
@@ -100,14 +112,17 @@ const CommentCard = ({ blogId }) => {
 
                 {usersComment(comment) && (
                   <Box>
-                    <Tooltip title="Düzenle">
+                    <Tooltip title="Edit">
                       <IconButton size="small" onClick={() => handleOpen(comment)}>
                         <EditIcon fontSize="small" color="primary" />
                       </IconButton>
                     </Tooltip>
 
-                    <Tooltip title="Sil">
-                      <IconButton size="small" onClick={() => deleteComment(comment._id, comment.blogId)}>
+                    <Tooltip title="Delete">
+                      <IconButton
+                        size="small"
+                        onClick={() => deleteComment(comment._id, comment.blogId)}
+                      >
                         <DeleteOutlineIcon fontSize="small" color="error" />
                       </IconButton>
                     </Tooltip>
@@ -136,7 +151,7 @@ const CommentCard = ({ blogId }) => {
                   color={likedComment(comment) ? "error" : "default"}
                   variant="text"
                 >
-                  {comment?.likes?.length || 0} Beğeni
+                  {comment?.likes?.length || 0} Likes
                 </Button>
               </Box>
             </Paper>
@@ -147,7 +162,9 @@ const CommentCard = ({ blogId }) => {
       })}
 
       {/* Comment Edit Modal */}
-      {selectedComment && <CommentModal open={open} handleClose={handleClose} comment={selectedComment} />}
+      {selectedComment && (
+        <CommentModal open={open} handleClose={handleClose} comment={selectedComment} />
+      )}
     </List>
   )
 }
