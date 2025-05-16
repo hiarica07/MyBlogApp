@@ -230,11 +230,11 @@ function NavBar() {
                   </Typography>
                 </MenuItem>
                 <MenuItem onClick={() => {
-                  // navigate("/myprofile")
+                  navigate("/new-blog")
                   handleCloseUserMenu()
                 }}>
                   <Typography sx={{ textAlign: "center" }}>
-                    Profile
+                    Write Blog
                   </Typography>
                 </MenuItem>
                 <MenuItem onClick={() => {
@@ -242,7 +242,7 @@ function NavBar() {
                   handleCloseUserMenu()
                 }}>
                   <Typography sx={{ textAlign: "center" }}>
-                    Account
+                    Profile
                   </Typography>
                 </MenuItem>
                 <MenuItem

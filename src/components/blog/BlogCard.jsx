@@ -26,7 +26,7 @@ const BlogCard = ({ _id, title, content, image, createdAt, countOfVisitors, like
   return (
     <Card
       sx={{
-        height: "100%",
+        height: "450",
         display: "flex",
         flexDirection: "column",
         borderRadius: 2,
@@ -45,7 +45,11 @@ const BlogCard = ({ _id, title, content, image, createdAt, countOfVisitors, like
           height="200"
           image={image || "/placeholder.svg?height=200&width=400"}
           alt={title}
-          sx={{ objectFit: "cover" }}
+          sx={{ 
+            objectFit: "cover",
+            height:200, 
+            
+            }}
         />
         {categoryId?.name && (
           <Chip
@@ -77,6 +81,7 @@ const BlogCard = ({ _id, title, content, image, createdAt, countOfVisitors, like
             textOverflow: "ellipsis",
             lineHeight: 1.3,
             height: "2.6em",
+            mb:1,
           }}
         >
           {title}
@@ -93,6 +98,7 @@ const BlogCard = ({ _id, title, content, image, createdAt, countOfVisitors, like
             textOverflow: "ellipsis",
             mb: 2,
             height: "4.5em",
+            flex:"1 0 auto"
           }}
         >
           {content}

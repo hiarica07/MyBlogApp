@@ -157,7 +157,7 @@ const MyBlogs = () => {
       <Paper elevation={0} sx={{ p: 2, mb: 3, borderRadius: 2, bgcolor: "background.paper" }}>
         <Grid container spacing={2} alignItems="center">
           {/* Tabs for filtering */}
-          <Grid item xs={12} md={5}>
+          <Grid size={{xs: 12, md: 5}}>
             <Tabs value={activeTab} onChange={handleTabChange} indicatorColor="primary" textColor="primary">
               <Tab label={`All (${totalBlogs})`} />
               <Tab label={`Published (${publishedBlogs})`} />
@@ -166,7 +166,7 @@ const MyBlogs = () => {
           </Grid>
 
           {/* Search */}
-          <Grid item xs={12} md={4}>
+          <Grid size={{xs: 12, md: 4}}>
             <Paper component="form" sx={{ p: "2px 4px", display: "flex", alignItems: "center", width: "100%" }}>
               <InputBase
                 sx={{ ml: 1, flex: 1 }}
@@ -181,7 +181,7 @@ const MyBlogs = () => {
           </Grid>
 
           {/* View and Sort Controls */}
-          <Grid item xs={12} md={3}>
+          <Grid size={{xs: 12, md: 3}}>
             <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1 }}>
               {/* View Type Toggle */}
               <IconButton
@@ -217,7 +217,7 @@ const MyBlogs = () => {
       {viewType === "grid" ? (
         <Grid container spacing={3}>
           {sortedBlogs?.map((blog) => (
-            <Grid item key={blog._id} xs={12} sm={6} md={4}>
+            <Grid key={blog._id} size={{xs: 12, md: 4, sm:6}}>
               <MyBlogCard {...blog} />
             </Grid>
           ))}
