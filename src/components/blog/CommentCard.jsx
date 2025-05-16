@@ -1,47 +1,37 @@
-import React, { useState } from "react";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import Divider from "@mui/material/Divider";
-import ListItemText from "@mui/material/ListItemText";
-import ListItemAvatar from "@mui/material/ListItemAvatar";
-import Avatar from "@mui/material/Avatar";
-import Typography from "@mui/material/Typography";
-import { Box, Button, CircularProgress } from "@mui/material";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import CommentModal from "../Modals/CommentModal";
-import useCommentCall from "../../hooks/useCommentCall";
-import { useSelector } from "react-redux";
-import { useEffect } from "react";
+import React, { useState, useEffect } from "react"
+import { List, Avatar, Typography, Box, Button, CircularProgress, Paper, IconButton, Tooltip } from "@mui/material"
+import {
+  Favorite as FavoriteIcon,
+  FavoriteBorder as FavoriteBorderIcon,
+  Edit as EditIcon,
+  Delete as DeleteOutlineIcon,
+  Person as PersonIcon,
+} from "@mui/icons-material"
+import CommentModal from "../Modals/CommentModal"
+import useCommentCall from "../../hooks/useCommentCall"
+import { useSelector } from "react-redux"
 
 const CommentCard = ({ blogId }) => {
-  const {getSingleBlogComments, deleteComment, postLikeComment} = useCommentCall()
-  const {singleBlogComments, loading, error} = useSelector((state) => state.comments)
-  // console.log("singleBlogComments", singleBlogComments);
-  const {currentUserId} = useSelector(state => state.auth)
-  // console.log("currentUserId", currentUserId);
-  
+  const { getSingleBlogComments, deleteComment, postLikeComment } = useCommentCall()
+  const { singleBlogComments, loading, error } = useSelector((state) => state.comments)
+  const { currentUserId } = useSelector((state) => state.auth)
 
   useEffect(() => {
-    getSingleBlogComments(blogId);
-  }, [blogId]);
+    getSingleBlogComments(blogId)
+  }, [blogId])
 
-  const [open, setOpen] = useState(false); // Modal control
-  const [selectedComment, setSelectedComment] = useState(null); // Seçilen yorumu tutar
+  const [open, setOpen] = useState(false)
+  const [selectedComment, setSelectedComment] = useState(null)
 
-  // Modal'ı açarken tıklanan yorumu seçer ve state'e ekler
   const handleOpen = (comment) => {
-    setSelectedComment(comment);
-    setOpen(true);
-  };
+    setSelectedComment(comment)
+    setOpen(true)
+  }
 
-  // Close Modal
   const handleClose = () => {
-    setOpen(false);
-    setSelectedComment(null);
-  };
+    setOpen(false)
+    setSelectedComment(null)
+  }
 
   const usersComment = (comment) => {
     if (currentUserId !== comment?.userId?._id) return false
@@ -53,122 +43,113 @@ const CommentCard = ({ blogId }) => {
     return comment?.likes.some((like) => like === currentUserId)
   }
 
-  // console.log(comments);
   if (loading) {
     return (
-      <Box display="flex" alignItems="center" justifyContent="center" minHeight="100vh">
-        <CircularProgress color="primary" />
+      <Box display="flex" alignItems="center" justifyContent="center" p={3}>
+        <CircularProgress color="primary" size={30} />
       </Box>
     )
-  }  
+  }
+
+  if (singleBlogComments.length === 0) {
+    return (
+      <Paper sx={{ p: 3, textAlign: "center", bgcolor: "background.paper" }}>
+        <Typography variant="body1" color="text.secondary">
+          Henüz yorum yapılmamış. İlk yorumu siz yapın!
+        </Typography>
+      </Paper>
+    )
+  }
 
   return (
-    <List sx={{ width: "100%", bgcolor: "background.paper", mt: 4 }}>
+    <List sx={{ width: "100%", bgcolor: "background.paper", borderRadius: 1 }}>
       {singleBlogComments.map((comment, index) => {
-        const formattedDate = new Date(comment.createdAt).toLocaleDateString(
-          "en-GB",
-          {
-            weekday: "short",
-            year: "numeric",
-            month: "short",
-            day: "numeric",
-          }
-        );
+        const formattedDate = new Date(comment.createdAt).toLocaleDateString("tr-TR", {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+
         return (
-          <ListItem key={index} alignItems="flex-start" sx={{my: 4}}>
-            <ListItemAvatar>
-              <Avatar alt={comment?.userId?.username} src="/static/images/avatar/1.jpg" />
-              <Typography>{comment?.userId?.username}</Typography>
-              <Typography>{formattedDate}</Typography>
-            </ListItemAvatar>
-            <ListItemText
-              primary={
-                <Typography
-                  component="span"
-                  variant="body2"
-                  sx={{ color: "text.primary", display: "inline" }}
-                >
-                  {comment?.comment}
-                </Typography>
-              }
-            />
-            <br />
-            <Divider />
-            {usersComment(comment) ? (
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "space-around",
-                  gap: "10px"
-                }}
-              >
-                {/* Like Button */}
-                <Button 
-                  size="small" 
-                  onClick={() => postLikeComment(comment?._id, comment)} 
-                  sx={{
-                    gap: "3px"
-                  }}
-                >
-                  {likedComment(comment) ? (
-                    <FavoriteIcon sx={{color: "red"}}/>
-                  ) : (
-                    <FavoriteBorderIcon sx={{ color: "red" }} />
-                  )}
-            
-                  <span>{comment?.likes?.length}</span>
-                </Button>
-                {/* Edit Button */}
-                <Button size="small" onClick={() => handleOpen(comment)}>
-                  <EditIcon sx={{color: "blue"}}/>
-                </Button>
+          <React.Fragment key={comment._id || index}>
+            <Paper
+              elevation={0}
+              sx={{
+                p: 2,
+                mb: 2,
+                borderRadius: 2,
+                border: "1px solid",
+                borderColor: "divider",
+              }}
+            >
+              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                  <Avatar sx={{ bgcolor: "primary.main" }}>
+                    {comment?.userId?.username?.[0]?.toUpperCase() || <PersonIcon />}
+                  </Avatar>
 
-                {/* CommentModal */}
-                {selectedComment && (
-                  <CommentModal
-                    open={open}
-                    handleClose={handleClose}
-                    comment={selectedComment} // Seçilen yorumu modal'a gönder
-                  />
+                  <Box>
+                    <Typography variant="subtitle2">{comment?.userId?.username || "Anonim"}</Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      {formattedDate}
+                    </Typography>
+                  </Box>
+                </Box>
+
+                {usersComment(comment) && (
+                  <Box>
+                    <Tooltip title="Düzenle">
+                      <IconButton size="small" onClick={() => handleOpen(comment)}>
+                        <EditIcon fontSize="small" color="primary" />
+                      </IconButton>
+                    </Tooltip>
+
+                    <Tooltip title="Sil">
+                      <IconButton size="small" onClick={() => deleteComment(comment._id, comment.blogId)}>
+                        <DeleteOutlineIcon fontSize="small" color="error" />
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
                 )}
-
-                {/* Delete Button */}
-                <Button size="small" onClick={() => deleteComment(comment._id, comment.blogId)}>
-                  <DeleteOutlineIcon sx={{color: "red"}}/>
-                </Button>
               </Box>
-            ) : (
-              <Box
+
+              <Typography
+                variant="body1"
                 sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                  gap: "10px"
+                  mt: 2,
+                  mb: 2,
+                  px: 1,
+                  py: 1,
+                  borderRadius: 1,
                 }}
               >
-                {/* Like Button */}
-                <Button 
-                  size="small" 
-                  onClick={() => postLikeComment(comment?._id, comment)} 
-                  sx={{
-                    gap: "3px"
-                  }}
-                >
-                  {likedComment(comment) ? (
-                    <FavoriteIcon sx={{color: "red"}}/>
-                  ) : (
-                    <FavoriteBorderIcon sx={{ color: "red" }} />
-                  )}            
-                  <span>{comment?.likes?.length}</span>
-                </Button>                
-              </Box>
-            )}            
-          </ListItem>
-        );
-      })}
-    </List>
-  );
-};
+                {comment?.comment}
+              </Typography>
 
-export default CommentCard;
+              <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+                <Button
+                  size="small"
+                  startIcon={likedComment(comment) ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+                  onClick={() => postLikeComment(comment?._id, comment)}
+                  color={likedComment(comment) ? "error" : "default"}
+                  variant="text"
+                >
+                  {comment?.likes?.length || 0} Beğeni
+                </Button>
+              </Box>
+            </Paper>
+
+            {index < singleBlogComments.length - 1 && <Box sx={{ my: 2 }} />}
+          </React.Fragment>
+        )
+      })}
+
+      {/* Comment Edit Modal */}
+      {selectedComment && <CommentModal open={open} handleClose={handleClose} comment={selectedComment} />}
+    </List>
+  )
+}
+
+export default CommentCard

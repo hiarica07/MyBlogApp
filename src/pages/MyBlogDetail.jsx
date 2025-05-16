@@ -85,7 +85,7 @@ const MyBlogDetail = () => {
 
   // Handle delete blog
   const handleDeleteBlog = () => {
-    if (window.confirm("Bu blogu silmek istediğinizden emin misiniz?")) {
+    if (window.confirm("Are you sure you want to delete this blog?")) {
       deleteBlog(_id)
       navigate("/myblogs")
     }
@@ -103,7 +103,7 @@ const MyBlogDetail = () => {
     <Container maxWidth="lg" sx={{ py: 4 }}>
       {/* Back Button */}
       <Button startIcon={<ArrowBackIcon />} onClick={() => navigate("/myblogs")} sx={{ mb: 3 }} variant="outlined">
-        Bloglarıma Dön
+        Back to My Blogs
       </Button>
 
       <Paper elevation={2} sx={{ borderRadius: 2, overflow: "hidden" }}>
@@ -122,7 +122,7 @@ const MyBlogDetail = () => {
 
           {/* Status Chip */}
           <Chip
-            label={isPublish ? "Yayında" : "Taslak"}
+            label={isPublish ? "Published" : "Draft"}
             color={isPublish ? "success" : "default"}
             size="small"
             sx={{
@@ -143,22 +143,22 @@ const MyBlogDetail = () => {
             </Typography>
 
             <Box sx={{ display: "flex", gap: 1 }}>
-              <Tooltip title="Düzenle">
+              <Tooltip title="Edit">
                 <IconButton onClick={handleEditModalOpen} color="primary">
                   <EditIcon />
                 </IconButton>
               </Tooltip>
-              <Tooltip title="Sil">
+              <Tooltip title="Delete">
                 <IconButton onClick={handleDeleteBlog} color="error">
                   <DeleteIcon />
                 </IconButton>
               </Tooltip>
-              <Tooltip title="Paylaş">
+              <Tooltip title="Share">
                 <IconButton>
                   <ShareIcon />
                 </IconButton>
               </Tooltip>
-              <Tooltip title="Kaydet">
+              <Tooltip title="Save">
                 <IconButton>
                   <BookmarkIcon />
                 </IconButton>
@@ -174,8 +174,8 @@ const MyBlogDetail = () => {
                   <PersonIcon />
                 </Avatar>
                 <Box>
-                  <Typography variant="subtitle2">Yazar</Typography>
-                  <Typography variant="body2">{userId?.username || "Anonim"}</Typography>
+                  <Typography variant="subtitle2">Author</Typography>
+                  <Typography variant="body2">{userId?.username || "Anonymous"}</Typography>
                 </Box>
               </Box>
             </Grid>
@@ -186,7 +186,7 @@ const MyBlogDetail = () => {
                   <CalendarIcon />
                 </Avatar>
                 <Box>
-                  <Typography variant="subtitle2">Yayınlanma Tarihi</Typography>
+                  <Typography variant="subtitle2">Published Date</Typography>
                   <Typography variant="body2">
                     {formattedDate} {formattedTime}
                   </Typography>
@@ -201,7 +201,7 @@ const MyBlogDetail = () => {
                     <CategoryIcon />
                   </Avatar>
                   <Box>
-                    <Typography variant="subtitle2">Kategori</Typography>
+                    <Typography variant="subtitle2">Category</Typography>
                     <Typography variant="body2">{categoryId.name}</Typography>
                   </Box>
                 </Box>
@@ -214,7 +214,7 @@ const MyBlogDetail = () => {
                   <VisibilityIcon />
                 </Avatar>
                 <Box>
-                  <Typography variant="subtitle2">Görüntülenme</Typography>
+                  <Typography variant="subtitle2">Views</Typography>
                   <Typography variant="body2">{countOfVisitors}</Typography>
                 </Box>
               </Box>
@@ -239,15 +239,15 @@ const MyBlogDetail = () => {
                 variant="outlined"
                 size="small"
               >
-                {likes?.length || 0} Beğeni
+                {likes?.length || 0} Likes
               </Button>
 
               <Button startIcon={<CommentIcon />} onClick={toggleComments} variant="outlined" size="small">
-                {comments?.length || 0} Yorum
+                {comments?.length || 0} Comments
               </Button>
 
               <Button startIcon={<VisibilityIcon />} variant="outlined" size="small" disabled>
-                {countOfVisitors} Görüntülenme
+                {countOfVisitors} Views
               </Button>
             </Box>
           </Box>
@@ -258,7 +258,7 @@ const MyBlogDetail = () => {
       {commentsOpen && (
         <Paper elevation={1} sx={{ mt: 3, p: 3, borderRadius: 2 }}>
           <Typography variant="h6" fontWeight="bold" gutterBottom>
-            Yorumlar
+            Comments
           </Typography>
 
           <CommentForm _id={_id} />
