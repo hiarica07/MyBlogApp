@@ -8,8 +8,8 @@ import BlogCard from "../components/blog/BlogCard"
 import FeaturedBlog from "../components/blog/FeaturedBlog"
 
 const Home = () => {
-  const { getBlogsData } = useBlogCalls()
-  const { blogs } = useSelector((state) => state.blog)
+  const { getBlogsData,getPublishedBlogs } = useBlogCalls()
+  const { blogs, publishedBlogs } = useSelector((state) => state.blog)
 
   // State for pagination
   const [page, setPage] = useState(1)
@@ -35,7 +35,7 @@ const Home = () => {
   }
 
   // Filter blogs based on search term
-  const filteredBlogs = blogs?.filter((blog) => {
+  const filteredBlogs = publishedBlogs?.filter((blog) => {
     if (!searchTerm) return true
 
     return (
@@ -47,7 +47,7 @@ const Home = () => {
 
   // Get featured blog (first blog or most viewed)
   const featuredBlog =
-    blogs && blogs.length > 0 ? [...blogs].sort((a, b) => b.countOfVisitors - a.countOfVisitors)[0] : null
+    publishedBlogs && publishedBlogs.length > 0 ? [...publishedBlogs].sort((a, b) => b.countOfVisitors - a.countOfVisitors)[0] : null
 
   // Get remaining blogs (excluding featured)
   const remainingBlogs = featuredBlog ? filteredBlogs?.filter((blog) => blog._id !== featuredBlog._id) : filteredBlogs
