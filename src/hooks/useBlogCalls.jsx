@@ -108,6 +108,19 @@ const useBlogCalls = () => {
       );
     }
   }
+  const getPublishedBlogs = async(endpoint, options) => {
+    dispatch(fetchStart())
+    try {
+      const {data} = await axiosWithToken.get(`blogs/${endpoint}/`, options)
+      dispatch(getPublishedUserBlogsSuccess(data.data))
+    } catch (error) {
+      dispatch(fetchFail())
+      toastErrorNotify(
+        error.response.data.message ||
+        "Something went wrong while fetching user blogs"
+      );
+    }
+  }
   
   
   return {
@@ -117,7 +130,9 @@ const useBlogCalls = () => {
     postBlog,
     deleteBlog,
     putBlog,
-    getSingleUserBlogs
+    getSingleUserBlogs,
+    getPublishedBlogs
+    
   }
 }
 
