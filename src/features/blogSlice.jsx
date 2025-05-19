@@ -43,7 +43,7 @@ const blogSlice = createSlice({
       state.error = false;
       state.singleUserBlogs = payload;
     },
-    getPublishedUserBlogsSuccess: (state, {payload}) => {
+    getPublishedBlogsSuccess: (state, {payload}) => {
       state.loading = false;
       state.error = false;
       state.publishedBlogs = payload;
@@ -60,7 +60,7 @@ export const {
   postLikeSuccess,
   getSingleBlogSuccess,
   getSingleUserBlogsSuccess,
-  getPublishedUserBlogsSuccess
+  getPublishedBlogsSuccess
 } = blogSlice.actions;
 
 export default blogSlice.reducer
