@@ -42,7 +42,6 @@ const Detail = () => {
 
   // State for comments section
   const [open, setOpen] = useState(false)
-  const toggleComments = () => setOpen(!open)
 
   // State for edit modal
   const [editModalOpen, setEditModalOpen] = useState(false)
@@ -223,7 +222,7 @@ const Detail = () => {
                   {likes?.length || 0} Likes
                 </Button>
 
-                <Button startIcon={<CommentIcon />} onClick={toggleComments} variant="outlined" size="medium">
+                <Button startIcon={<CommentIcon />} variant="outlined" size="medium">
                   {comments?.length || 0} Comments
                 </Button>
               </Box>
@@ -246,7 +245,7 @@ const Detail = () => {
         </Paper>
 
         {/* Comments Section */}
-        {open && (
+        
           <Paper elevation={1} sx={{ mt: 3, p: 3, borderRadius: 2 }}>
             <Typography variant="h5" fontWeight="bold" gutterBottom>
               Comments
@@ -258,7 +257,7 @@ const Detail = () => {
               <CommentCard blogId={_id} />
             </Box>
           </Paper>
-        )}
+        
 
         {/* Edit Blog Modal */}
         {editModalOpen && (
@@ -269,18 +268,6 @@ const Detail = () => {
             categories={categories}
           />
         )}
-
-        {/* Go Back Button */}
-        <Box
-          sx={{ display: "flex", justifyContent: "center", alignItems: "center", my: 3 }}
-          onClick={() => {
-            navigate(-1)
-          }}
-        >
-          <Button size="medium" variant="outlined" startIcon={<ArrowBackIcon />} sx={{ borderRadius: 8, px: 4, py: 1 }}>
-            Go Back
-          </Button>
-        </Box>
       </Container>
     </Box>
   )

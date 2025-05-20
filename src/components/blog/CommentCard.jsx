@@ -73,7 +73,8 @@ const CommentCard = ({ blogId }) => {
 
   return (
     <List sx={{ width: "100%", bgcolor: "background.paper", borderRadius: 1 }}>
-      {singleBlogComments.map((comment, index) => {
+      {[...singleBlogComments]
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).map((comment, index) => {
         const formattedDate = new Date(comment.createdAt).toLocaleDateString("tr-TR", {
           year: "numeric",
           month: "short",
