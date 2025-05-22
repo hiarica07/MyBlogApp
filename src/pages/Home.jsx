@@ -10,51 +10,86 @@ import {
   InputBase,
   IconButton,
   Chip,
+  CircularProgress,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import SearchIcon from "@mui/icons-material/Search";
 import useBlogCalls from "../hooks/useBlogCalls";
 import BlogCard from "../components/blog/BlogCard";
 import FeaturedBlog from "../components/blog/FeaturedBlog";
-import HomeHeader from "../components/home/HomeHeader";
+import HomeHeader from "../components/home/homeHeader";
+import PaginationComponent from "../components/PaginationComponent";
+import SearchBar from "../components/SearchBar";
 
 const Home = () => {
+  const { publishedBlogs, loading } = useSelector((state) => state.blog);
+  const { pagPublishedBlogs } = useSelector((state) => state.pagination);
   const { getPublishedBlogs } = useBlogCalls();
-  const { publishedBlogs } = useSelector((state) => state.blog);
 
   // State for pagination
-  const [page, setPage] = useState(1);
+  // const [page, setPage] = useState(1);
 
   // State for search
   const [searchTerm, setSearchTerm] = useState("");
 
   // Handle page change
-  const handlePageChange = (event, value) => {
-    setPage(value);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+  // const handlePageChange = (event, value) => {
+  //   setPage(value);
+  //   window.scrollTo({ top: 0, behavior: "smooth" });
+  // };
 
   // Handle search change
-  const handleSearchChange = (event) => {
-    setSearchTerm(event.target.value);
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
   };
 
   // Handle search submit
-  const handleSearchSubmit = (event) => {
-    event.preventDefault();
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
     // You could add additional search functionality here
   };
 
   // Filter blogs based on search term
-  const filteredBlogs = publishedBlogs?.filter((blog) => {
-    if (!searchTerm) return true;
+  // const filteredBlogs = publishedBlogs?.filter((blog) => {
+  //   if (!searchTerm) return true;
 
-    return (
-      blog?.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      blog?.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      blog?.categoryId?.name?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  });
+  //   return (
+  //     blog?.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //     blog?.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //     blog?.categoryId?.name?.toLowerCase().includes(searchTerm.toLowerCase())
+  //   );
+  // });
+
+  const searchFilteredBlog =
+    searchTerm.trim() === ""
+      ? publishedBlogs
+      : publishedBlogs?.filter((blog) =>
+          [blog?.title, blog?.content, blog?.categoryId?.name]
+            .filter(Boolean)
+            .some((name) =>
+              name.toLowerCase().includes(searchTerm.toLowerCase())
+            )
+        );
+
+  const searchFilteredPagBlog =
+    searchTerm.trim() === ""
+      ? pagPublishedBlogs
+      : pagPublishedBlogs?.filter((blog) =>
+          [blog?.title, blog?.content, blog?.categoryId?.name]
+            .filter(Boolean)
+            .some((name) =>
+              name.toLowerCase().includes(searchTerm.toLowerCase())
+            )
+        );
+
+  const blogsToDisplay =
+    searchFilteredPagBlog?.length > 0
+      ? searchFilteredPagBlog
+      : searchFilteredBlog;
+
+  // console.log("filteredBlogs", filteredBlogs);
+  // console.log("pagPublishedBlogs", pagPublishedBlogs);
+  // console.log("searchFilteredBlog", searchFilteredBlog);
 
   // Get featured blog (first blog or most viewed)
   const featuredBlog =
@@ -65,17 +100,36 @@ const Home = () => {
       : null;
 
   // Get remaining blogs (excluding featured)
-  const remainingBlogs = featuredBlog
-    ? filteredBlogs?.filter((blog) => blog._id !== featuredBlog._id)
-    : filteredBlogs;
+  // const remainingBlogs = featuredBlog
+  //   ? filteredBlogs?.filter((blog) => blog._id !== featuredBlog._id)
+  //   : filteredBlogs;
 
   useEffect(() => {
     // getBlogsData("blogs", { params: { limit: 10, page } });
-    getPublishedBlogs("publishedBlogs", { params: { limit: 10, page } });
-  }, [page]);
+    // getPublishedBlogs("publishedBlogs", { params: { limit: 10, page } });
+    getPublishedBlogs("publishedBlogs");
+  }, []);
 
   // console.log(filteredBlogs);
   // console.log(featuredBlog);
+  const searchQuery = searchTerm ? `title=${searchTerm}` : "";
+
+  // const displayedBlogs = searchTerm.trim() === "" ? publishedBlogs : filteredBlogs
+
+  // console.log("displayedBlogs", displayedBlogs);
+
+  if (loading) {
+    return (
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        minHeight="100vh"
+      >
+        <CircularProgress color="primary" />
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{ bgcolor: "#f5f5f5", minHeight: "100vh", py: 4 }}>
@@ -83,44 +137,13 @@ const Home = () => {
         {/* Header */}
         <HomeHeader />
         {/* Search Bar */}
-        <Paper
-          component="form"
-          sx={{
-            p: "2px 4px",
-            display: "flex",
-            alignItems: "center",
-            maxWidth: 500,
-            mx: "auto",
-            mb: 2,
-          }}
-          elevation={1}
-          onSubmit={handleSearchSubmit}
-        >
-          <InputBase
-            sx={{ ml: 1, flex: 1 }}
-            placeholder="Search blogs..."
-            value={searchTerm}
-            onChange={handleSearchChange}
-          />
-          <IconButton type="submit" sx={{ p: "10px" }} aria-label="search">
-            <SearchIcon />
-          </IconButton>
-        </Paper>
-
+        <SearchBar
+          handleSearchSubmit={handleSearchSubmit}
+          handleSearchChange={handleSearchChange}
+          searchTerm={searchTerm}
+        />
         {/* Featured Blog */}
-        {featuredBlog && !searchTerm && (
-          <Box sx={{ mb: 6 }}>
-            <Typography
-              variant="h5"
-              component="h2"
-              sx={{ mb: 3, fontWeight: "bold" }}
-            >
-              Featured Post
-            </Typography>
-            <FeaturedBlog {...featuredBlog} />
-          </Box>
-        )}
-
+        {featuredBlog && !searchTerm && <FeaturedBlog {...featuredBlog} />}
         {/* Blog Grid */}
         <Box sx={{ mb: 6 }}>
           <Box
@@ -144,7 +167,7 @@ const Home = () => {
             )}
           </Box>
 
-          {filteredBlogs?.length === 0 ? (
+          {searchFilteredBlog?.length === 0 ? (
             <Paper sx={{ p: 4, textAlign: "center" }}>
               <Typography variant="h6" color="text.secondary">
                 No blogs found matching your search.
@@ -152,7 +175,7 @@ const Home = () => {
             </Paper>
           ) : (
             <Grid container spacing={3}>
-              {filteredBlogs?.map((blog) => (
+              {blogsToDisplay?.map((blog) => (
                 <Grid key={blog._id} size={{ xs: 12, sm: 6, md: 4 }}>
                   <BlogCard {...blog} />
                 </Grid>
@@ -162,24 +185,14 @@ const Home = () => {
         </Box>
 
         {/* Pagination */}
-        <Box sx={{ display: "flex", justifyContent: "center", mt: 6, mb: 2 }}>
-          <Stack spacing={2}>
-            <Pagination
-              count={10}
-              page={page}
-              onChange={handlePageChange}
-              color="primary"
-              size="large"
-              showFirstButton
-              showLastButton
-              sx={{
-                "& .MuiPaginationItem-root": {
-                  fontSize: "1rem",
-                },
-              }}
-            />
-          </Stack>
-        </Box>
+        {searchFilteredBlog && (
+          <PaginationComponent
+            endpoint={"blogs/publishedBlogs"}
+            slice={"pagPublishedBlogs"}
+            data={searchFilteredBlog}
+            // query={searchQuery}
+          />
+        )}
       </Container>
     </Box>
   );

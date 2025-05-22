@@ -1,4 +1,3 @@
-import React from 'react'
 import { useDispatch } from 'react-redux'
 import { fetchFail, fetchStart, getPagDataSuccess } from '../features/paginationSlice'
 import { toastErrorNotify } from '../helper/ToastNotify'

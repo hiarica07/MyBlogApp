@@ -111,7 +111,7 @@ const useBlogCalls = () => {
   const getPublishedBlogs = async(endpoint, options) => {
     dispatch(fetchStart())
     try {
-      const {data} = await axiosWithToken.get(`blogs/${endpoint}/`, options)
+      const {data} = await axiosPublic.get(`blogs/${endpoint}/`, options)
       dispatch(getPublishedBlogsSuccess(data.data))
     } catch (error) {
       dispatch(fetchFail())
