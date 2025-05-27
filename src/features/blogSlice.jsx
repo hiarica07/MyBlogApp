@@ -1,27 +1,55 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+const initialState = {
+  loading: false,
+  error: null,
+  blogs: {},
+  categories: {},
+  comments: [],
+  stats: {},
+  blog: {
+    _id: '',
+    title: '',
+    content: '',
+    image: '',
+    userId: '',
+    categoryId: '',
+    likes: [],
+    comments: [],
+    countOfVisitors: 0,
+    createdAt: '',
+  },
+  singleUserBlogs: {},
+  publishedBlogs: [],
+};
+
 const blogSlice = createSlice({
   name: "blog",
 
-  initialState: {
-    loading: false,
-    error: false,
-    blogs: [],
-    categories: [],
-    comments: [], 
-    blog: {},
-    singleUserBlogs: null,
-    publishedBlogs: null
-  }, 
+  initialState,
+    
   reducers: {
     fetchStart: (state) => {
       state.loading = true;
-      state.error = false;
+      state.error = null;
     },
-    fetchFail: (state) => {
+    fetchFail: (state,{payload}) => {
       state.loading = false;
-      state.error = true;
+      state.error = payload || "An error occured";
     },
+    setData: (state, {payload}) => {
+      state.loading = false;
+      state.error = null;
+      state[payload.key] = payload.data;
+    },
+    setSingleData: (state, {payload}) => {
+      state.loading = false;
+      state.error = null;
+      state[payload.key] = payload.data;
+    },
+
+    ///////////////////////////
+
     getBlogsDataSuccess:(state,{payload}) => {
       state.loading = false;
       state.error = false;
@@ -56,11 +84,12 @@ export const {
   fetchStart,
   fetchFail,
   getBlogsDataSuccess,
-  // getCommentsSuccess,
   postLikeSuccess,
   getSingleBlogSuccess,
   getSingleUserBlogsSuccess,
-  getPublishedBlogsSuccess
+  getPublishedBlogsSuccess,
+  setData,
+  setSingleData,
 } = blogSlice.actions;
 
 export default blogSlice.reducer

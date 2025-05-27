@@ -11,9 +11,10 @@ const usePaginationCall = () => {
     const getDataByPage = async (endpoint, slice, limit, page, query = "") => {
         dispatch(fetchStart())
         try {
+            // query parametresi zaten doğru formatta geldiği için doğrudan ekleyelim
             const queryString = query ? `&${query}` : ""
             const {data} = await axiosPublic.get(`${BASE_URL}${endpoint}?limit=${limit}&page=${page}${queryString}`)
-            dispatch(getPagDataSuccess({slice,data:data.data}))
+            dispatch(getPagDataSuccess({slice, data: data.data}))
         } catch (error) {
             dispatch(fetchFail())
             toastErrorNotify(error.response?.data?.message || `Failed to fetch ${endpoint}`)

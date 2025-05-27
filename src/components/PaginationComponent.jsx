@@ -6,18 +6,11 @@ import { setPage } from "../features/paginationSlice";
 import {
   Box,
   Typography,
-//   Pagination,
-//   PaginationItem,
-//   Button,
 } from "@mui/material";
-// import {
-//   NavigateBefore as NavigateBeforeIcon,
-//   NavigateNext as NavigateNextIcon,
-// } from "@mui/icons-material";
 import Stack from "@mui/material/Stack";
 import Pagination from '@mui/material/Pagination';
 
-const PaginationComponent = ({ endpoint, slice, data, query }) => {
+const PaginationComponent = ({ endpoint, slice, data, query, onPageItems }) => {
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
   const { getDataByPage } = usePaginationCall();
@@ -25,25 +18,41 @@ const PaginationComponent = ({ endpoint, slice, data, query }) => {
     (state) => state.pagination
   );
 
-//   console.log("`${data}`", data);
-
-  const totalPages = Math.ceil(data?.length / itemsPerPage);
-
+  const totalPages = Math.ceil(data?.length / itemsPerPage) || 1;
   const pageFromUrl = Number(searchParams.get("page")) || 1;
+
+  // Mevcut sayfadaki verileri hesaplayalım (frontend pagination)
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentPageData = data?.slice(startIndex, endIndex) || [];
 
   useEffect(() => {
     if (!searchParams.get("page")) {
       setSearchParams({ page: 1 }, { replace: true });
     } else {
       dispatch(setPage(pageFromUrl));
-      getDataByPage(endpoint, slice, itemsPerPage, pageFromUrl, query);
+      
+      // Eğer arama yapılmamışsa backend pagination kullan
+      if (!data || data.length === 0) {
+        getDataByPage(endpoint, slice, itemsPerPage, pageFromUrl, query);
+      }
     }
-  }, [searchParams]);
+  // Bağımlılık dizisini düzeltelim - searchParams.toString() kullanarak
+  // searchParams nesnesinin değişip değişmediğini kontrol edelim
+  }, [searchParams.toString(), endpoint, slice, itemsPerPage, pageFromUrl, query, dispatch, getDataByPage]);
+
+  // Mevcut sayfa verileri değiştiğinde callback'i çağır
+  useEffect(() => {
+    if (onPageItems && currentPageData.length > 0) {
+      onPageItems(currentPageData);
+    }
+  }, [currentPageData, onPageItems, currentPage]);
 
   const handlePageChange = (event, page) => {
     if (page > 0 && page <= totalPages) {
       setSearchParams({ page });
       dispatch(setPage(page));
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
@@ -58,7 +67,7 @@ const PaginationComponent = ({ endpoint, slice, data, query }) => {
       }}
     >
       <Typography variant="body2" color="text.secondary">
-        Showing {data.length} data from 1 to {data.length}
+        Showing {startIndex + 1}-{Math.min(endIndex, data?.length || 0)} of {data?.length || 0} items
       </Typography>
 
       <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
@@ -71,41 +80,6 @@ const PaginationComponent = ({ endpoint, slice, data, query }) => {
             size="medium"
             showFirstButton 
             showLastButton
-            // renderItem={(item) => (
-            //   <PaginationItem
-            //     slots={{ previous: NavigateBeforeIcon, next: NavigateNextIcon }}
-            //     //   components={{
-            //     //     previous: () => (
-            //     //       <Button
-            //     //         size="small"
-            //     //         startIcon={<NavigateBeforeIcon />}
-            //     //         disabled={item.disabled}
-            //     //       >
-            //     //         Previous
-            //     //       </Button>
-            //     //     ),
-            //     //     next: () => (
-            //     //       <Button
-            //     //         size="small"
-            //     //         endIcon={<NavigateNextIcon />}
-            //     //         disabled={item.disabled}
-            //     //       >
-            //     //         Next
-            //     //       </Button>
-            //     //     ),
-            //     //   }}
-            //     {...item}
-            //     sx={{
-            //       "&.Mui-selected": {
-            //         bgcolor: "primary.main",
-            //         color: "white",
-            //         "&:hover": {
-            //           bgcolor: "primary.dark",
-            //         },
-            //       },
-            //     }}
-            //   />
-            // )}
           />
         </Stack>
       </Box>

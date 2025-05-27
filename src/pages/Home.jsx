@@ -1,19 +1,14 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import {
-  Pagination,
-  Stack,
   Container,
   Typography,
   Box,
   Paper,
-  InputBase,
-  IconButton,
   Chip,
   CircularProgress,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
-import SearchIcon from "@mui/icons-material/Search";
 import useBlogCalls from "../hooks/useBlogCalls";
 import BlogCard from "../components/blog/BlogCard";
 import FeaturedBlog from "../components/blog/FeaturedBlog";
@@ -23,20 +18,12 @@ import SearchBar from "../components/SearchBar";
 
 const Home = () => {
   const { publishedBlogs, loading } = useSelector((state) => state.blog);
-  const { pagPublishedBlogs } = useSelector((state) => state.pagination);
   const { getPublishedBlogs } = useBlogCalls();
-
-  // State for pagination
-  // const [page, setPage] = useState(1);
 
   // State for search
   const [searchTerm, setSearchTerm] = useState("");
-
-  // Handle page change
-  // const handlePageChange = (event, value) => {
-  //   setPage(value);
-  //   window.scrollTo({ top: 0, behavior: "smooth" });
-  // };
+  // State for current page data
+  const [currentPageItems, setCurrentPageItems] = useState([]);
 
   // Handle search change
   const handleSearchChange = (e) => {
@@ -46,50 +33,31 @@ const Home = () => {
   // Handle search submit
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    // You could add additional search functionality here
+    
+    // Arama yapıldığında, tüm blogları getir (sayfalama olmadan)
+    if (searchTerm.trim() !== "") {
+      // Limit parametresini çok yüksek bir değere ayarlayarak tüm verileri alalım
+      getPublishedBlogs("publishedBlogs", { params: { limit: 100 } });
+    } else {
+      // Arama temizlendiğinde, normal sayfalı verileri getir
+      getPublishedBlogs("publishedBlogs");
+    }
   };
 
-  // Filter blogs based on search term
-  // const filteredBlogs = publishedBlogs?.filter((blog) => {
-  //   if (!searchTerm) return true;
-
-  //   return (
-  //     blog?.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //     blog?.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //     blog?.categoryId?.name?.toLowerCase().includes(searchTerm.toLowerCase())
-  //   );
-  // });
-
+  // Arama sonuçlarını filtreleyip, doğru şekilde sayfalayalım
   const searchFilteredBlog =
     searchTerm.trim() === ""
       ? publishedBlogs
       : publishedBlogs?.filter((blog) =>
           [blog?.title, blog?.content, blog?.categoryId?.name]
             .filter(Boolean)
-            .some((name) =>
-              name.toLowerCase().includes(searchTerm.toLowerCase())
+            .some((field) =>
+              field.toLowerCase().includes(searchTerm.toLowerCase())
             )
         );
 
-  const searchFilteredPagBlog =
-    searchTerm.trim() === ""
-      ? pagPublishedBlogs
-      : pagPublishedBlogs?.filter((blog) =>
-          [blog?.title, blog?.content, blog?.categoryId?.name]
-            .filter(Boolean)
-            .some((name) =>
-              name.toLowerCase().includes(searchTerm.toLowerCase())
-            )
-        );
 
-  const blogsToDisplay =
-    searchFilteredPagBlog?.length > 0
-      ? searchFilteredPagBlog
-      : searchFilteredBlog;
-
-  // console.log("filteredBlogs", filteredBlogs);
-  // console.log("pagPublishedBlogs", pagPublishedBlogs);
-  // console.log("searchFilteredBlog", searchFilteredBlog);
+        
 
   // Get featured blog (first blog or most viewed)
   const featuredBlog =
@@ -99,24 +67,14 @@ const Home = () => {
         )[0]
       : null;
 
-  // Get remaining blogs (excluding featured)
-  // const remainingBlogs = featuredBlog
-  //   ? filteredBlogs?.filter((blog) => blog._id !== featuredBlog._id)
-  //   : filteredBlogs;
+  // Callback function to get current page items from PaginationComponent
+  const handleCurrentPageItems = (items) => {
+    setCurrentPageItems(items);
+  };
 
   useEffect(() => {
-    // getBlogsData("blogs", { params: { limit: 10, page } });
-    // getPublishedBlogs("publishedBlogs", { params: { limit: 10, page } });
     getPublishedBlogs("publishedBlogs");
   }, []);
-
-  // console.log(filteredBlogs);
-  // console.log(featuredBlog);
-  const searchQuery = searchTerm ? `title=${searchTerm}` : "";
-
-  // const displayedBlogs = searchTerm.trim() === "" ? publishedBlogs : filteredBlogs
-
-  // console.log("displayedBlogs", displayedBlogs);
 
   if (loading) {
     return (
@@ -161,7 +119,10 @@ const Home = () => {
             {searchTerm && (
               <Chip
                 label={`Results for: "${searchTerm}"`}
-                onDelete={() => setSearchTerm("")}
+                onDelete={() => {
+                  setSearchTerm("");
+                  getPublishedBlogs("publishedBlogs");
+                }}
                 color="primary"
               />
             )}
@@ -175,7 +136,7 @@ const Home = () => {
             </Paper>
           ) : (
             <Grid container spacing={3}>
-              {blogsToDisplay?.map((blog) => (
+              {currentPageItems?.map((blog) => (
                 <Grid key={blog._id} size={{ xs: 12, sm: 6, md: 4 }}>
                   <BlogCard {...blog} />
                 </Grid>
@@ -184,13 +145,13 @@ const Home = () => {
           )}
         </Box>
 
-        {/* Pagination */}
-        {searchFilteredBlog && (
+        {/* Pagination - Sadece bir tane PaginationComponent kullanıyoruz */}
+        {searchFilteredBlog && searchFilteredBlog.length > 0 && (
           <PaginationComponent
             endpoint={"blogs/publishedBlogs"}
             slice={"pagPublishedBlogs"}
             data={searchFilteredBlog}
-            // query={searchQuery}
+            onPageItems={handleCurrentPageItems}
           />
         )}
       </Container>
