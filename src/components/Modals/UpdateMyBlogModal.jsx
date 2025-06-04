@@ -32,6 +32,7 @@ const style = {
 };
 
 const UpdateMyBlogModal = ({ open, handleClose, blog, categories }) => {
+  const navigate = useNavigate();
   const {putBlog} = useBlogCalls()
   const [formData, setFormData] = useState({
     title: blog?.title || "",
@@ -58,6 +59,7 @@ const UpdateMyBlogModal = ({ open, handleClose, blog, categories }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    navigate("/my-blogs-details" +blog?._id);
     putBlog(blog?._id, formData)
     console.log("Form data:", formData);
     handleClose();

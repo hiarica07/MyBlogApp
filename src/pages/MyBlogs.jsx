@@ -185,7 +185,7 @@ const MyBlogs = () => {
           {/* {sortedBlogs?.map((blog) => ( */}
           {data?.map((blog) => (
             <Grid key={blog._id} size={{xs: 12, sm: 6, md: 4}}>
-              <MyBlogCard {...blog} />
+              <MyBlogCard {...blog} categories={categories}/>
             </Grid>
           ))}
         </Grid>
