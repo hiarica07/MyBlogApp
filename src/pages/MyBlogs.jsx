@@ -1,37 +1,34 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, lazy, Suspense } from "react"
 import { useSelector } from "react-redux"
-import {
-  Box,
-  Typography,
-  Container,
-  Tabs,
-  Tab,
-  InputBase,
-  IconButton,
-  Menu,
-  MenuItem,
-  Pagination,
-  Stack,
-  // Grid,
-  Paper,
-} from "@mui/material"
+import { Box, Typography, Container, Tabs, Tab, IconButton, Menu, MenuItem, Paper, CircularProgress } from "@mui/material"
 import Grid from "@mui/material/Grid2";
-import SearchIcon from "@mui/icons-material/Search"
 import ViewModuleIcon from "@mui/icons-material/ViewModule"
 import ViewListIcon from "@mui/icons-material/ViewList"
 import SortIcon from "@mui/icons-material/Sort"
 import useBlogCalls from "../hooks/useBlogCalls"
 import MyBlogCard from "../components/blog/MyBlogCard"
 import MyBlogListItem from "../components/blog/MyBlogListItem"
-import BlogStats from "../components/blog/BlogStats"
+import { useSearchParams } from "react-router-dom";
+import SearchBar from "../components/SearchBar";
+
+const BlogStats = lazy(() => import("../components/blog/BlogStats"))
+const PaginationComponent = lazy(() => import("../components/PaginationComponent"))
 
 const MyBlogs = () => {
-  const { getSingleUserBlogs } = useBlogCalls()
+  const { getSingleUserBlogs, getBlogStats } = useBlogCalls()
   const { currentUserId } = useSelector((state) => state.auth)
-  const { singleUserBlogs } = useSelector((state) => state.blog)
+  const { singleUserBlogs: {data, details}, loading, stats} = useSelector((state) => state.blog)
+  console.log("Blog stats", stats);
+  // console.log("data", data);
+  // console.log("details", details);
+  
+  
+  const [searchParams] = useSearchParams()
 
-  // State for pagination
-  const [page, setPage] = useState(1)
+  const page = searchParams.get("page") ? Number(searchParams.get("page")) : 1
+  const limit = searchParams.get("limit") ? Number(searchParams.get("limit")) : 24
+  const search = searchParams.get("search[title]") || ""
+  // const category = searchParams.get("category") || ""
 
   // State for view type (grid or list)
   const [viewType, setViewType] = useState("grid")
@@ -48,11 +45,6 @@ const MyBlogs = () => {
 
   // State for sort option
   const [sortOption, setSortOption] = useState("newest")
-
-  // Handle page change
-  const handlePageChange = (event, value) => {
-    setPage(value)
-  }
 
   // Handle view type change
   const handleViewTypeChange = (type) => {
@@ -90,46 +82,37 @@ const MyBlogs = () => {
     setActiveTab(newValue)
   }
 
-  // Filter blogs based on search term and active tab
-  const filteredBlogs = singleUserBlogs?.filter((blog) => {
-    const matchesSearch =
-      blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      blog.content.toLowerCase().includes(searchTerm.toLowerCase())
-
-    // Filter based on active tab (All, Published, Drafts)
-    if (activeTab === 1 && !blog.isPublish) return false
-    if (activeTab === 2 && blog.isPublish) return false
-
-    return matchesSearch
-  })
-
-  // Sort blogs based on sort option
-  const sortedBlogs = [...(filteredBlogs || [])].sort((a, b) => {
-    if (sortOption === "newest") {
-      return new Date(b.createdAt) - new Date(a.createdAt)
-    } else if (sortOption === "oldest") {
-      return new Date(a.createdAt) - new Date(b.createdAt)
-    } else if (sortOption === "mostViewed") {
-      return b.countOfVisitors - a.countOfVisitors
-    } else if (sortOption === "mostLiked") {
-      return b.likes.length - a.likes.length
-    } else if (sortOption === "mostCommented") {
-      return b.comments.length - a.comments.length
-    }
-    return 0
-  })
-
-  // Calculate blog stats
-  const totalBlogs = singleUserBlogs?.length || 0
-  const publishedBlogs = singleUserBlogs?.filter((blog) => blog.isPublish).length || 0
-  const draftBlogs = totalBlogs - publishedBlogs
-  const totalViews = singleUserBlogs?.reduce((sum, blog) => sum + blog.countOfVisitors, 0) || 0
-  const totalLikes = singleUserBlogs?.reduce((sum, blog) => sum + blog.likes.length, 0) || 0
-  const totalComments = singleUserBlogs?.reduce((sum, blog) => sum + blog.comments.length, 0) || 0
-
   useEffect(() => {
-    getSingleUserBlogs("userBlogs", { params: { limit: 10, page } })
-  }, [page])
+    // getSingleUserBlogs("userBlogs", { params: { limit: 10, page } })
+    // getSingleUserBlogs("userBlogs")
+    const filter = {"filter[userId": currentUserId}
+    if (activeTab === 1 ) filter["filter[isPublish]"] = true
+    if (activeTab === 2 ) filter["filter[isPublish]"] = false
+
+    let sort = undefined
+    if (sortOption === "newest") sort = "-createdAt"
+    else if (sortOption === "oldest") sort = "createdAt"
+    else if (sortOption === "mostViewed") sort = "-countOfVisitors"
+    else if (sortOption === "mostLiked") sort = "-likes"
+    else if (sortOption === "mostCommented") sort = "-comments"
+
+    const options = {limit, page, ...filter, "search[title]": search,}
+    if (sort) options.sort = sort
+    getSingleUserBlogs("userBlogs", { params: options })
+  }, [page, limit, search, activeTab, sortOption, currentUserId])
+
+  // if (loading) {
+  //   return (
+  //     <Box
+  //       display="flex"
+  //       alignItems="center"
+  //       justifyContent="center"
+  //       minHeight="100vh"
+  //     >
+  //       <CircularProgress color="primary" />
+  //     </Box>
+  //   );
+  // }
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
@@ -144,44 +127,27 @@ const MyBlogs = () => {
       </Box>
 
       {/* Stats Cards */}
-      <BlogStats
-        totalBlogs={totalBlogs}
-        publishedBlogs={publishedBlogs}
-        draftBlogs={draftBlogs}
-        totalViews={totalViews}
-        totalLikes={totalLikes}
-        totalComments={totalComments}
-      />
+      <Suspense fallback = {<CircularProgress sx={{ display: "block", margin: "auto", mt: 4 }} />}>
+        <BlogStats currentUserId={currentUserId} />
+      </Suspense>
 
       {/* Filters and Controls */}
       <Paper elevation={0} sx={{ p: 2, mb: 3, borderRadius: 2, bgcolor: "background.paper" }}>
         <Grid container spacing={2} alignItems="center">
           {/* Tabs for filtering */}
-          <Grid size={{xs: 12, md: 5}}>
+          <Grid size={{xs: 12,md: 5}}>
             <Tabs value={activeTab} onChange={handleTabChange} indicatorColor="primary" textColor="primary">
-              <Tab label={`All (${totalBlogs})`} />
-              <Tab label={`Published (${publishedBlogs})`} />
-              <Tab label={`Drafts (${draftBlogs})`} />
+              <Tab label={`All (${stats?.totalRecords})`} />
+              <Tab label={`Published (${stats?.published})`} />
+              <Tab label={`Drafts (${stats?.draft})`} />
             </Tabs>
           </Grid>
 
           {/* Search */}
-          <Grid size={{xs: 12, md: 4}}>
-            <Paper component="form" sx={{ p: "2px 4px", display: "flex", alignItems: "center", width: "100%" }}>
-              <InputBase
-                sx={{ ml: 1, flex: 1 }}
-                placeholder="Search blogs"
-                value={searchTerm}
-                onChange={handleSearchChange}
-              />
-              <IconButton type="button" sx={{ p: "10px" }} aria-label="search">
-                <SearchIcon />
-              </IconButton>
-            </Paper>
-          </Grid>
+          <SearchBar/>
 
           {/* View and Sort Controls */}
-          <Grid size={{xs: 12, md: 3}}>
+          <Grid size={{xs: 12,md: 3}}>
             <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1 }}>
               {/* View Type Toggle */}
               <IconButton
@@ -216,22 +182,24 @@ const MyBlogs = () => {
       {/* Blog List */}
       {viewType === "grid" ? (
         <Grid container spacing={3}>
-          {sortedBlogs?.map((blog) => (
-            <Grid key={blog._id} size={{xs: 12, md: 4, sm:6}}>
+          {/* {sortedBlogs?.map((blog) => ( */}
+          {data?.map((blog) => (
+            <Grid key={blog._id} size={{xs: 12, sm: 6, md: 4}}>
               <MyBlogCard {...blog} />
             </Grid>
           ))}
         </Grid>
       ) : (
         <Box>
-          {sortedBlogs?.map((blog) => (
+          {/* {sortedBlogs?.map((blog) => ( */}
+          {data?.map((blog) => (
             <MyBlogListItem key={blog._id} {...blog} />
           ))}
         </Box>
       )}
 
       {/* Empty State */}
-      {(!sortedBlogs || sortedBlogs.length === 0) && (
+      {(!data || data.length === 0) && (
         <Box sx={{ textAlign: "center", py: 8 }}>
           <Typography variant="h6" color="text.secondary" gutterBottom>
             No blogs found
@@ -243,20 +211,10 @@ const MyBlogs = () => {
       )}
 
       {/* Pagination */}
-      {sortedBlogs && sortedBlogs.length > 0 && (
-        <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-          <Stack spacing={2}>
-            <Pagination
-              count={10} // You might want to calculate this based on total blogs
-              page={page}
-              onChange={handlePageChange}
-              color="primary"
-              showFirstButton
-              showLastButton
-            />
-          </Stack>
-        </Box>
-      )}
+      <Suspense fallback={<CircularProgress sx={{ display: "block", margin: "auto", mt: 4 }} />}>
+        <PaginationComponent details={details} />
+      </Suspense>
+      
     </Container>
   )
 }

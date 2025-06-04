@@ -8,6 +8,9 @@ import {
   Publish as PublishIcon,
   Save as DraftIcon,
 } from "@mui/icons-material"
+import useBlogCalls from "../../hooks/useBlogCalls";
+import { useSelector } from "react-redux";
+import { useEffect } from "react";
 
 const StatCard = ({ icon, title, value, color }) => {
   return (
@@ -47,7 +50,23 @@ const StatCard = ({ icon, title, value, color }) => {
   )
 }
 
-const BlogStats = ({ totalBlogs, publishedBlogs, draftBlogs, totalViews, totalLikes, totalComments }) => {
+const BlogStats = ({ currentUserId }) => {
+  const {getSingleUserBlogs, getBlogStats} = useBlogCalls()
+  const {stats, loading} = useSelector(state => state.blog)
+
+  useEffect(() => {
+    getBlogStats(currentUserId)
+  }, [currentUserId])
+
+  console.log("BlogStats stats", stats);
+  
+  const totalBlogs = stats?.totalRecords || 0
+  const publishedBlogs = stats?.published || 0
+  const draftBlogs = stats?.draft || 0
+  const totalViews = stats?.totalVisitors || 0
+  const totalLikes = stats?.totalLikes || 0
+  const totalComments = stats?.totalComments || 0
+
   return (
     <Box sx={{ mb: 4 }}>
       <Grid container spacing={2}>

@@ -4,7 +4,7 @@ const initialState = {
   loading: false,
   error: null,
   blogs: {},
-  categories: {},
+  categories: [],
   comments: [],
   stats: {},
   blog: {
@@ -21,23 +21,23 @@ const initialState = {
   },
   singleUserBlogs: {},
   publishedBlogs: [],
-};
+}
 
 const blogSlice = createSlice({
   name: "blog",
-
-  initialState,
-    
+  initialState, 
   reducers: {
     fetchStart: (state) => {
       state.loading = true;
       state.error = null;
     },
-    fetchFail: (state,{payload}) => {
+    fetchFail: (state, {payload}) => {
       state.loading = false;
-      state.error = payload || "An error occured";
+      state.error = payload || "An error occurred while fetching data.";
     },
     setData: (state, {payload}) => {
+      // console.log("setData payload", payload);
+      
       state.loading = false;
       state.error = null;
       state[payload.key] = payload.data;
@@ -48,18 +48,12 @@ const blogSlice = createSlice({
       state[payload.key] = payload.data;
     },
 
-    ///////////////////////////
 
     getBlogsDataSuccess:(state,{payload}) => {
       state.loading = false;
       state.error = false;
       state[payload.endpoint] = payload.blog
       // console.log(`${payload.endpoint}`, payload)
-    },    
-    getSingleBlogSuccess: (state, {payload}) => {
-      state.loading = false;
-      state.error = false;
-      state.blog = payload;
     },
     getSingleBlogSuccess: (state, {payload}) => {
       state.loading = false;
@@ -67,29 +61,32 @@ const blogSlice = createSlice({
       state.blog = payload;
     },
     getSingleUserBlogsSuccess: (state, {payload}) => {
+      // console.log(payload);
       state.loading = false;
       state.error = false;
       state.singleUserBlogs = payload;
     },
     getPublishedBlogsSuccess: (state, {payload}) => {
+      // console.log(payload);
       state.loading = false;
       state.error = false;
       state.publishedBlogs = payload;
     },
-    
+
   },
 });
 
 export const {
   fetchStart,
   fetchFail,
+  setData,
+  setSingleData,
   getBlogsDataSuccess,
+  // getCommentsSuccess,
   postLikeSuccess,
   getSingleBlogSuccess,
   getSingleUserBlogsSuccess,
-  getPublishedBlogsSuccess,
-  setData,
-  setSingleData,
+  getPublishedBlogsSuccess
 } = blogSlice.actions;
 
 export default blogSlice.reducer

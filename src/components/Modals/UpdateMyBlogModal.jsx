@@ -72,6 +72,7 @@ const UpdateMyBlogModal = ({ open, handleClose, blog, categories }) => {
     <Modal
       open={open}
       onClose={handleClose}
+      onClick={(e) => e.stopPropagation()}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
       slotProps={{
